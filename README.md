@@ -26,7 +26,7 @@ This is a complete milestone pipeline, not a placeholder.
 Run everything in one PowerShell session:
 
 ```powershell
-cd "c:\Users\vadit\Desktop\AegisAI"
+cd "Your Project Dir"
 .\.venv\Scripts\Activate.ps1
 python scripts\sample_splits.py --train-size 300000
 python -m ml.training.train
