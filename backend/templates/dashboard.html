@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AegisAI Dashboard</title>
+  <link rel="stylesheet" href="/static/dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div>
+      <p class="brand">AegisAI</p>
+      <h1>Detection Dashboard</h1>
+      <p class="sub">Offline CICIDS replay · dry-run response · live API stats</p>
+    </div>
+    <div class="health" id="health">Checking model…</div>
+  </header>
+
+  <section class="metrics" id="metrics">
+    <article><span class="num" id="m-alerts">0</span><span class="lbl">Alerts</span></article>
+    <article><span class="num" id="m-dets">0</span><span class="lbl">Detections</span></article>
+    <article><span class="num" id="m-acts">0</span><span class="lbl">Actions</span></article>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <h2>Predictions by class</h2>
+      <canvas id="classChart" height="180"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Actions</h2>
+      <canvas id="actionChart" height="180"></canvas>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="panel wide">
+      <h2>Recent detections</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Alert</th>
+              <th>Class</th>
+              <th>Confidence</th>
+              <th>Model</th>
+            </tr>
+          </thead>
+          <tbody id="det-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel wide">
+      <h2>Recent alerts</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Time</th>
+              <th>Source</th>
+              <th>Dest</th>
+              <th>Proto</th>
+            </tr>
+          </thead>
+          <tbody id="alert-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Auto-refreshes every 5s · Response actions are dry-run unless configured otherwise</p>
+  </footer>
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>

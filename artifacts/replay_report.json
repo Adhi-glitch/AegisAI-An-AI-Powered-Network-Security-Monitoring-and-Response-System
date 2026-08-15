@@ -1,0 +1,431 @@
+{
+  "csv": "C:\\Users\\vadit\\Desktop\\AegisAI\\ml\\data\\splits\\sample\\test.csv",
+  "n": 30,
+  "predicted_counts": {
+    "Benign": 26,
+    "DoS": 2,
+    "DDoS": 2
+  },
+  "results": [
+    {
+      "row": 0,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999805688858032,
+      "anomaly_score": 0.29640349051276105,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.3313);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.1",
+        "unblock_at": 1786638642.7908695
+      }
+    },
+    {
+      "row": 1,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9995858073234558,
+      "anomaly_score": 0.2992439462547632,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.5516);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.2",
+        "unblock_at": 1786638642.9988322
+      }
+    },
+    {
+      "row": 2,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999808073043823,
+      "anomaly_score": 0.2784795711572893,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.2745);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.3",
+        "unblock_at": 1786638643.039075
+      }
+    },
+    {
+      "row": 3,
+      "true_label": 4,
+      "predicted": "DoS",
+      "confidence": 0.9991650581359863,
+      "anomaly_score": 0.29819652460824175,
+      "action": "block",
+      "explanation": "Predicted class: DoS. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.5787);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.4",
+        "unblock_at": 1786638643.087123
+      }
+    },
+    {
+      "row": 4,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999308586120605,
+      "anomaly_score": 0.5186013038588552,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=2.8176);  Bwd Packet Length Std (importance=0.0827, value=0.7467);  PSH Flag Count (importance=0.0733, value=1.5363).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.5",
+        "unblock_at": 1786638643.1341612
+      }
+    },
+    {
+      "row": 5,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999797344207764,
+      "anomaly_score": 0.2780120690488263,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.4266);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.6",
+        "unblock_at": 1786638643.1745794
+      }
+    },
+    {
+      "row": 6,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999806880950928,
+      "anomaly_score": 0.2803842923235083,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.2248);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.7",
+        "unblock_at": 1786638643.2187812
+      }
+    },
+    {
+      "row": 7,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999793767929077,
+      "anomaly_score": 0.29483465489272925,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.4108);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.8",
+        "unblock_at": 1786638643.2583861
+      }
+    },
+    {
+      "row": 8,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999560117721558,
+      "anomaly_score": 0.37761487572311436,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.4763);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.9",
+        "unblock_at": 1786638643.320129
+      }
+    },
+    {
+      "row": 9,
+      "true_label": 4,
+      "predicted": "DoS",
+      "confidence": 0.9993608593940735,
+      "anomaly_score": 0.29819652460824175,
+      "action": "block",
+      "explanation": "Predicted class: DoS. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.5787);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.10",
+        "unblock_at": 1786638643.3667798
+      }
+    },
+    {
+      "row": 10,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999699592590332,
+      "anomaly_score": 0.35576937978399653,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=0.6198);  Bwd Packet Length Std (importance=0.0827, value=0.5240);  PSH Flag Count (importance=0.0733, value=1.5363).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.11",
+        "unblock_at": 1786638643.4068186
+      }
+    },
+    {
+      "row": 11,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999806880950928,
+      "anomaly_score": 0.2799298942854535,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.2474);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.12",
+        "unblock_at": 1786638643.4534988
+      }
+    },
+    {
+      "row": 12,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999808073043823,
+      "anomaly_score": 0.27531772521471537,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.3121);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.13",
+        "unblock_at": 1786638643.4935849
+      }
+    },
+    {
+      "row": 13,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9994462132453918,
+      "anomaly_score": 0.28182062246522877,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.5516);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.14",
+        "unblock_at": 1786638643.5465043
+      }
+    },
+    {
+      "row": 14,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999806880950928,
+      "anomaly_score": 0.2756363228267482,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.3890);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.15",
+        "unblock_at": 1786638643.602924
+      }
+    },
+    {
+      "row": 15,
+      "true_label": 3,
+      "predicted": "DDoS",
+      "confidence": 0.9997337460517883,
+      "anomaly_score": 0.3293646474189756,
+      "action": "block",
+      "explanation": "Predicted class: DDoS. Top contributing features: Idle Mean (importance=0.1859, value=-0.0820);  Idle Max (importance=0.0885, value=-0.0951);  Average Packet Size (importance=0.0843, value=-0.5571);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.16",
+        "unblock_at": 1786638643.6474586
+      }
+    },
+    {
+      "row": 16,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.999891996383667,
+      "anomaly_score": 0.2946195046710398,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.5787);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.17",
+        "unblock_at": 1786638643.6974547
+      }
+    },
+    {
+      "row": 17,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9998924732208252,
+      "anomaly_score": 0.2914271814178496,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.5516);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.18",
+        "unblock_at": 1786638643.7393436
+      }
+    },
+    {
+      "row": 18,
+      "true_label": 3,
+      "predicted": "DDoS",
+      "confidence": 0.9998825788497925,
+      "anomaly_score": 0.4832103630189777,
+      "action": "block",
+      "explanation": "Predicted class: DDoS. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=4.4277);  Bwd Packet Length Std (importance=0.0827, value=6.5002);  PSH Flag Count (importance=0.0733, value=1.5363).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.19",
+        "unblock_at": 1786638643.7864926
+      }
+    },
+    {
+      "row": 19,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999262094497681,
+      "anomaly_score": 0.3531248221803329,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.1178);  Idle Max (importance=0.0885, value=-0.1298);  Average Packet Size (importance=0.0843, value=-0.2546);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.20",
+        "unblock_at": 1786638643.8277206
+      }
+    },
+    {
+      "row": 20,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999700784683228,
+      "anomaly_score": 0.4923867682070746,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=2.1026);  Idle Max (importance=0.0885, value=2.0235);  Average Packet Size (importance=0.0843, value=0.4012);  Bwd Packet Length Std (importance=0.0827, value=0.5635);  PSH Flag Count (importance=0.0733, value=1.5363).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.21",
+        "unblock_at": 1786638643.8728719
+      }
+    },
+    {
+      "row": 21,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999715089797974,
+      "anomaly_score": 0.40113406831845094,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=0.0710);  Idle Max (importance=0.0885, value=0.0532);  Average Packet Size (importance=0.0843, value=-0.1827);  Bwd Packet Length Std (importance=0.0827, value=0.2076);  PSH Flag Count (importance=0.0733, value=1.5363).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.22",
+        "unblock_at": 1786638643.9364603
+      }
+    },
+    {
+      "row": 22,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999806880950928,
+      "anomaly_score": 0.2744871001665994,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.3656);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.23",
+        "unblock_at": 1786638643.98026
+      }
+    },
+    {
+      "row": 23,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9998600482940674,
+      "anomaly_score": 0.30224449990522956,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.5697);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=1.5363).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.24",
+        "unblock_at": 1786638644.0255337
+      }
+    },
+    {
+      "row": 24,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999778270721436,
+      "anomaly_score": 0.31805529404568705,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.0937);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.25",
+        "unblock_at": 1786638644.081177
+      }
+    },
+    {
+      "row": 25,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9927093982696533,
+      "anomaly_score": 0.281778824391928,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.5787);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.26",
+        "unblock_at": 1786638644.1272686
+      }
+    },
+    {
+      "row": 26,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999712705612183,
+      "anomaly_score": 0.3808416181866625,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.1385);  Idle Max (importance=0.0885, value=-0.1500);  Average Packet Size (importance=0.0843, value=-0.4708);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.27",
+        "unblock_at": 1786638644.1795528
+      }
+    },
+    {
+      "row": 27,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999808073043823,
+      "anomaly_score": 0.2783934016443376,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.2504);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.28",
+        "unblock_at": 1786638644.2320204
+      }
+    },
+    {
+      "row": 28,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9998480081558228,
+      "anomaly_score": 0.30098863010927207,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.5652);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=1.5363).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.29",
+        "unblock_at": 1786638644.2739153
+      }
+    },
+    {
+      "row": 29,
+      "true_label": 0,
+      "predicted": "Benign",
+      "confidence": 0.9999806880950928,
+      "anomaly_score": 0.2808202804896885,
+      "action": "block",
+      "explanation": "Predicted class: Benign. Top contributing features: Idle Mean (importance=0.1859, value=-0.3521);  Idle Max (importance=0.0885, value=-0.3570);  Average Packet Size (importance=0.0843, value=-0.2685);  Bwd Packet Length Std (importance=0.0827, value=-0.3995);  PSH Flag Count (importance=0.0733, value=-0.6509).",
+      "response": {
+        "status": "dry_run_blocked",
+        "ip": "10.0.0.30",
+        "unblock_at": 1786638644.330008
+      }
+    }
+  ]
+}
