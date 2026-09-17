@@ -18,7 +18,7 @@ Pipeline: network capture → feature extraction → detection + anomaly → exp
 | `backend/` | FastAPI: alerts, detections, stats, dashboard | Done for milestone |
 | `ml/` | Loader, sample splits, train, evaluate, model bundle | Done for milestone |
 | `database/` | SQLAlchemy Alert / Detection / Action / Report | Done |
-| `network_capture/` | Live capture | Stub |
+| `network_capture/` | Live capture | Partial: Scapy-backed live capture helper implemented; runtime integration pending |
 | `frontend/` | Reserved; dashboard currently served by FastAPI | Empty (API UI used) |
 | `rag/`, `notifications/` | Future | Empty |
 
