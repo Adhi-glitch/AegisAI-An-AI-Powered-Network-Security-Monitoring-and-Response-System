@@ -18,7 +18,9 @@ from ml.models.bundle import (
 )
 
 
-def load_model(path: str = "ml/models/baseline_rf.pkl"):
+def load_model(path: str | None = None):
+    if path is None:
+        return load_rf()
     return load_rf(Path(path))
 
 

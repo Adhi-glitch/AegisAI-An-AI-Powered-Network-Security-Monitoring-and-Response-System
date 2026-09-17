@@ -2,9 +2,10 @@
 Response engine: maps confidence tiers to actions (log, rate_limit, block).
 Defaults to dry-run. Includes whitelist and auto-unblock timeout logic.
 """
-from typing import Dict, Any
 import time
-from threading import Lock, Thread
+from threading import Lock
+from typing import Any, Dict
+
 from config import get_config
 
 cfg = get_config()
@@ -55,7 +56,9 @@ class ResponseEngine:
 
     def _block(self, ip: str):
         with self.lock:
-            unblock_time = time.time() + self.unblock_after_seconds
+            now = time.time()
+            self._prune_expired_locked(now)
+            unblock_time = now + self.unblock_after_seconds
             self.blocked[ip] = unblock_time
         # TODO: implement actual firewall command (iptables/netsh); keep dry_run safe
         if self.dry_run:
@@ -64,28 +67,18 @@ class ResponseEngine:
 
     def manual_unblock(self, ip: str) -> Dict[str, Any]:
         with self.lock:
+            self._prune_expired_locked()
             if ip in self.blocked:
                 del self.blocked[ip]
                 # TODO: remove firewall rule
                 return {"status": "unblocked", "ip": ip}
             return {"status": "not_blocked", "ip": ip}
 
-    def _reaper(self):
-        while True:
-            now = time.time()
-            with self.lock:
-                expired = [ip for ip, t in self.blocked.items() if t <= now]
-                for ip in expired:
-                    del self.blocked[ip]
-                    # TODO: remove firewall rule (if not dry_run)
-            time.sleep(5)
-
-    def start_reaper(self):
-        if getattr(self, "_reaper_started", False):
-            return
-        self._reaper_started = True
-        t = Thread(target=self._reaper, daemon=True)
-        t.start()
+    def _prune_expired_locked(self, now: float | None = None):
+        now = time.time() if now is None else now
+        expired = [ip for ip, unblock_time in self.blocked.items() if unblock_time <= now]
+        for ip in expired:
+            del self.blocked[ip]
 
 
 # default instance
