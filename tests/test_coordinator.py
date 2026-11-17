@@ -1,4 +1,10 @@
-from agents.coordinator.coordinator import process_features
+from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
+
+from agents.coordinator import coordinator
+from agents.coordinator.coordinator import ModelUnavailableError, process_features
 
 
 class DummyModel:
@@ -22,3 +28,35 @@ def test_coordinator_explanation_nonempty():
     res = process_features(fv, model=DummyModel())
     assert isinstance(res["explanation"], str)
     assert len(res["explanation"]) > 10
+
+
+def test_coordinator_does_not_report_benign_when_model_bundle_is_unavailable(monkeypatch):
+    def unavailable():
+        raise ValueError("invalid bundle")
+
+    monkeypatch.setattr(coordinator, "load_runtime", unavailable)
+
+    with pytest.raises(ModelUnavailableError, match="inference was not run"):
+        process_features({"source_ip": "198.51.100.10", "duration": 1.0})
+
+
+def test_failed_model_reload_does_not_leave_a_partial_runtime_cache(monkeypatch):
+    previous_runtime = coordinator._cached.copy()
+    bundle = SimpleNamespace(
+        model=object(),
+        feature_columns=["duration"],
+        label_classes=["Benign"],
+        directory=Path("bundle"),
+        metadata={},
+    )
+
+    def broken_anomaly(_path):
+        raise ValueError("invalid anomaly model")
+
+    monkeypatch.setattr(coordinator, "load_bundle", lambda: bundle)
+    monkeypatch.setattr(coordinator, "load_anomaly", broken_anomaly)
+
+    with pytest.raises(ValueError, match="invalid anomaly model"):
+        coordinator.load_runtime(force=True)
+
+    assert coordinator._cached == previous_runtime

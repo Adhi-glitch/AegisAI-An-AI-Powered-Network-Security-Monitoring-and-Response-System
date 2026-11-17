@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aegisai}
+      POSTGRES_USER: ${POSTGRES_USER:-aegisai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      AEGIS_ENV: production
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-aegisai}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-aegisai}
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
+      AEGIS_ADMIN_USERNAME: ${AEGIS_ADMIN_USERNAME:-admin}
+      AEGIS_ADMIN_PASSWORD: ${AEGIS_ADMIN_PASSWORD:?Set AEGIS_ADMIN_PASSWORD in .env}
+      AEGIS_VIEWER_USERNAME: ${AEGIS_VIEWER_USERNAME:-viewer}
+      AEGIS_VIEWER_PASSWORD: ${AEGIS_VIEWER_PASSWORD:?Set AEGIS_VIEWER_PASSWORD in .env}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-480}
+    ports:
+      - "127.0.0.1:${AEGIS_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp:mode=1777,size=64m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
