@@ -1,79 +1,238 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AegisAI Dashboard</title>
+  <meta name="theme-color" content="#071311" />
+  <title>Security operations | AegisAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/dashboard.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <script src="/static/dashboard.js" defer></script>
 </head>
 <body>
-  <header class="top">
-    <div>
-      <p class="brand">AegisAI</p>
-      <h1>Detection Dashboard</h1>
-      <p class="sub">Offline CICIDS replay · dry-run response · live API stats</p>
-    </div>
-    <div class="health" id="health">Checking model…</div>
-  </header>
-
-  <section class="metrics" id="metrics">
-    <article><span class="num" id="m-alerts">0</span><span class="lbl">Alerts</span></article>
-    <article><span class="num" id="m-dets">0</span><span class="lbl">Detections</span></article>
-    <article><span class="num" id="m-acts">0</span><span class="lbl">Actions</span></article>
-  </section>
-
-  <section class="grid">
-    <div class="panel">
-      <h2>Predictions by class</h2>
-      <canvas id="classChart" height="180"></canvas>
-    </div>
-    <div class="panel">
-      <h2>Actions</h2>
-      <canvas id="actionChart" height="180"></canvas>
-    </div>
-  </section>
-
-  <section class="grid">
-    <div class="panel wide">
-      <h2>Recent detections</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Alert</th>
-              <th>Class</th>
-              <th>Confidence</th>
-              <th>Model</th>
-            </tr>
-          </thead>
-          <tbody id="det-body"></tbody>
-        </table>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="/" aria-label="AegisAI home">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span class="brand-name">AEGIS<span>AI</span></span>
+      </a>
+      <button class="sidebar-toggle icon-button" id="sidebar-toggle" type="button" aria-label="Collapse navigation" aria-expanded="true" title="Collapse navigation">
+        <span aria-hidden="true">‹</span>
+      </button>
+      <div class="sidebar-caption">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Dashboard sections">
+        <a class="nav-link is-active" href="#overview" data-nav="overview"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">Overview</span></a>
+        <a class="nav-link" href="#sensor" data-nav="sensor"><span class="nav-icon" aria-hidden="true">◎</span><span class="nav-label">Live sensor</span></a>
+        <a class="nav-link" href="#analytics" data-nav="analytics"><span class="nav-icon" aria-hidden="true">▥</span><span class="nav-label">Analytics</span></a>
+        <a class="nav-link" href="#detections" data-nav="detections"><span class="nav-icon" aria-hidden="true">◈</span><span class="nav-label">Detections</span></a>
+        <a class="nav-link" href="#alerts" data-nav="alerts"><span class="nav-icon" aria-hidden="true">△</span><span class="nav-label">Alerts</span></a>
+        <a class="nav-link" href="#actions" data-nav="actions"><span class="nav-icon" aria-hidden="true">↗</span><span class="nav-label">Response actions</span></a>
+        <a class="nav-link" href="#model-status" data-nav="model-status"><span class="nav-icon" aria-hidden="true">◉</span><span class="nav-label">Model &amp; data</span></a>
+      </nav>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-note">
+        <span class="sidebar-note-mark" aria-hidden="true">i</span>
+        <span class="nav-label">Local prototype. Response actions are dry-run only.</span>
       </div>
-    </div>
-    <div class="panel wide">
-      <h2>Recent alerts</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Time</th>
-              <th>Source</th>
-              <th>Dest</th>
-              <th>Proto</th>
-            </tr>
-          </thead>
-          <tbody id="alert-body"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
+      <a class="sidebar-docs" href="/api/docs" target="_blank" rel="noreferrer"><span class="nav-icon" aria-hidden="true">↗</span><span class="nav-label">API reference</span></a>
+    </aside>
 
-  <footer>
-    <p>Auto-refreshes every 5s · Response actions are dry-run unless configured otherwise</p>
-  </footer>
-  <script src="/static/dashboard.js"></script>
+    <div class="main-column">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" id="mobile-menu" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+        <div class="topbar-context"><span class="topbar-kicker">AEGISAI</span><span class="context-divider">/</span><span>Security operations</span></div>
+        <label class="global-search-wrap" for="global-search">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="global-search" type="search" placeholder="Search detections, alerts, IPs…" autocomplete="off" aria-label="Search dashboard data" />
+          <kbd>/</kbd>
+        </label>
+        <div class="topbar-status">
+          <span class="health-pill state-loading" id="api-health-pill"><i></i><span>Checking API</span></span>
+          <span class="socket-pill" id="ws-health-pill" title="Live event stream disconnected"><i></i><span>Feed offline</span></span>
+          <span class="capture-pill state-unknown" id="capture-top-state"><i></i><span>Sensor unknown</span></span>
+        </div>
+        <div class="user-controls">
+          <span class="user-chip" id="session-chip"><span class="user-avatar" aria-hidden="true">?</span><span id="session-label">Signed out</span></span>
+          <button class="button button-quiet" id="sign-in-btn" type="button">Sign in</button>
+          <button class="button button-quiet" id="sign-out-btn" type="button" hidden>Sign out</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="prototype-banner" role="note">
+          <span class="banner-icon" aria-hidden="true">!</span>
+          <span><strong>Prototype</strong> · Dry-run response · Evaluation has capture overlap</span>
+          <a href="#model-status">View model limits <span aria-hidden="true">→</span></a>
+        </div>
+
+        <section class="page-section" id="overview" aria-labelledby="page-title">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">NETWORK DEFENSE / OVERVIEW</p>
+              <h1 id="page-title">Security overview</h1>
+              <p class="page-subtitle">A live view of observed traffic, model classifications, and response decisions.</p>
+            </div>
+            <div class="heading-actions">
+              <span class="updated-label">Updated <time id="last-updated">—</time></span>
+              <button class="button button-secondary" id="refresh-button" type="button"><span aria-hidden="true">↻</span> Refresh</button>
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <article class="card kpi-card">
+              <div class="kpi-top"><span class="kpi-label">TOTAL ALERTS</span><span class="kpi-icon cyan" aria-hidden="true">△</span></div>
+              <strong class="kpi-value skeleton-text" id="kpi-alerts">—</strong>
+              <div class="kpi-bottom"><span class="kpi-context">Persisted threat records</span><span class="kpi-trend" id="trend-alerts">API total</span></div>
+              <canvas class="sparkline" id="spark-alerts" aria-hidden="true"></canvas>
+            </article>
+            <article class="card kpi-card">
+              <div class="kpi-top"><span class="kpi-label">DETECTIONS</span><span class="kpi-icon purple" aria-hidden="true">◈</span></div>
+              <strong class="kpi-value skeleton-text" id="kpi-detections">—</strong>
+              <div class="kpi-bottom"><span class="kpi-context">Persisted classifications</span><span class="kpi-trend" id="trend-detections">24h trend loading</span></div>
+              <canvas class="sparkline" id="spark-detections" aria-hidden="true"></canvas>
+            </article>
+            <article class="card kpi-card">
+              <div class="kpi-top"><span class="kpi-label">BLOCK DECISIONS</span><span class="kpi-icon amber" aria-hidden="true">⛨</span></div>
+              <strong class="kpi-value skeleton-text" id="kpi-blocks">—</strong>
+              <div class="kpi-bottom"><span class="kpi-context">Recorded as dry-run; none enforced</span><span class="kpi-trend neutral">No firewall changes</span></div>
+              <canvas class="sparkline" id="spark-actions" aria-hidden="true"></canvas>
+            </article>
+            <article class="card kpi-card">
+              <div class="kpi-top"><span class="kpi-label">ATTACK RATE</span><span class="kpi-icon rose" aria-hidden="true">％</span></div>
+              <strong class="kpi-value" id="kpi-attack-rate">N/A</strong>
+              <div class="kpi-bottom"><span class="kpi-context">Observed-flow denominator unavailable</span><span class="kpi-trend neutral">Not computed</span></div>
+              <canvas class="sparkline" id="spark-rate" aria-hidden="true"></canvas>
+            </article>
+          </div>
+
+          <div class="bento-grid overview-grid">
+            <article class="card latest-card" aria-labelledby="latest-title">
+              <div class="card-heading"><div><p class="eyebrow">MOST RECENT PERSISTED DETECTION</p><h2 id="latest-title">Latest threat</h2></div><span class="status-tag" id="latest-status">Awaiting data</span></div>
+              <div class="latest-content" id="latest-content">
+                <div class="latest-class-wrap"><span class="class-dot class-unknown" id="latest-dot"></span><strong id="latest-class">No detection loaded</strong></div>
+                <p id="latest-summary">Sign in to load current detection records.</p>
+                <div class="latest-meta">
+                  <span><small>MODEL CONFIDENCE</small><strong id="latest-confidence">—</strong></span>
+                  <span><small>SOURCE</small><strong id="latest-source">—</strong></span>
+                  <span><small>OBSERVED</small><strong class="mono" id="latest-time">—</strong></span>
+                </div>
+              </div>
+              <button class="text-button" id="latest-open" type="button" disabled>Open detection details <span aria-hidden="true">→</span></button>
+            </article>
+            <article class="card chart-card timeline-card">
+              <div class="card-heading">
+                <div><p class="eyebrow">DETECTION VOLUME</p><h2>Activity · last 24 hours</h2></div>
+                <div class="timeline-controls"><div class="segmented-control" role="group" aria-label="Timeline display window"><button type="button" id="timeline-24h" class="is-selected" aria-pressed="true">24h</button><button type="button" id="timeline-12h" aria-pressed="false">12h</button></div><div class="segmented-control" role="group" aria-label="Timeline display mode"><button type="button" id="timeline-count" class="is-selected" aria-pressed="true">Count</button><button type="button" id="timeline-rate" aria-pressed="false">Hourly rate</button></div></div>
+              </div>
+              <p class="chart-note" id="timeline-note">Hourly totals from the detections timeline API.</p>
+              <div class="chart-box chart-timeline"><canvas id="timeline-chart" role="img" aria-label="Detection counts per hour for the last 24 hours"></canvas><div class="chart-state" id="timeline-state">Loading timeline…</div></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="page-section" id="sensor" aria-labelledby="sensor-title">
+          <div class="section-title-row"><div><p class="eyebrow">CAPTURE CONTROL / ADMIN ONLY</p><h2 id="sensor-title">Live sensor</h2></div><span class="sensor-state state-unknown" id="capture-status"><i></i><span>Unknown</span></span></div>
+          <div class="card sensor-card">
+            <div class="sensor-main">
+              <div class="sensor-radar" id="sensor-radar" aria-hidden="true"><span></span><i></i><b></b></div>
+              <div class="sensor-copy"><strong id="capture-auth-state">Administrator sign-in required</strong><span id="capture-help">Choose a capture interface and filter. Start only on networks you are authorized to monitor.</span></div>
+              <button class="button button-secondary" id="sensor-sign-in" type="button">Admin sign in</button>
+            </div>
+            <div class="sensor-controls">
+              <label class="field" for="capture-interface"><span>Network interface</span><select id="capture-interface" disabled><option value="">Sign in as admin to load interfaces</option></select></label>
+              <label class="field" for="capture-filter"><span>BPF capture filter</span><input id="capture-filter" value="ip" autocomplete="off" disabled /></label>
+              <div class="sensor-buttons"><button class="button button-primary" id="capture-start" type="button" disabled><span class="button-led"></span>Start capture</button><button class="button button-danger" id="capture-stop" type="button" disabled>Stop sensor</button></div>
+            </div>
+            <div class="sensor-stats">
+              <div class="sensor-stat"><span class="eyebrow">PACKETS OBSERVED</span><strong class="mono" id="capture-packets">—</strong></div>
+              <div class="sensor-stat"><span class="eyebrow">FLOWS EMITTED</span><strong class="mono" id="capture-flows">—</strong></div>
+              <div class="sensor-stat"><span class="eyebrow">PACKETS / SEC</span><strong class="mono" id="capture-packets-rate">—</strong></div>
+              <div class="sensor-stat"><span class="eyebrow">FLOWS / SEC</span><strong class="mono" id="capture-flows-rate">—</strong></div>
+              <div class="throughput-mini"><canvas id="throughput-chart" role="img" aria-label="Recent observed packet and flow rates"></canvas></div>
+            </div>
+            <div class="sensor-foot"><p id="capture-error" class="inline-error" role="alert" aria-live="polite" hidden></p><button class="button button-secondary retry-button" id="capture-retry" type="button" hidden>Retry interface discovery</button><p class="sensor-disclaimer">Model confidence is not a calibrated probability. Behavioral rules are limited indicators, not proof of compromise. Response remains dry-run.</p></div>
+            <div class="sensor-log-wrap"><div class="sensor-log-heading"><span>CAPTURE EVENT LOG</span><span id="sensor-log-state">Waiting for sensor</span></div><ol class="sensor-log" id="sensor-log" aria-live="polite"><li class="log-empty">No capture events received in this session.</li></ol></div>
+          </div>
+        </section>
+
+        <section class="page-section" id="analytics" aria-labelledby="analytics-title">
+          <div class="section-title-row"><div><p class="eyebrow">OBSERVED DATA / ANALYTICS</p><h2 id="analytics-title">Detection analytics</h2></div><span class="section-hint">Charts use API records; unavailable fields are shown honestly.</span></div>
+          <div class="analytics-grid">
+            <article class="card chart-card"><div class="card-heading"><div><p class="eyebrow">THREAT MIX</p><h3>Detections by class</h3></div><span class="chart-total" id="class-total">—</span></div><div class="chart-box"><canvas id="class-chart" role="img" aria-label="Donut chart showing detections by class"></canvas><div class="chart-state">Loading class distribution…</div></div><div class="chart-legend" id="class-legend"></div></article>
+            <article class="card chart-card"><div class="card-heading"><div><p class="eyebrow">RESPONSE AUDIT</p><h3>Action distribution</h3></div><span class="chart-total">DRY-RUN</span></div><div class="chart-box"><canvas id="action-chart" role="img" aria-label="Horizontal bar chart showing dry-run actions"></canvas><div class="chart-state">Loading action records…</div></div></article>
+            <article class="card chart-card"><div class="card-heading"><div><p class="eyebrow">MODEL OUTPUT</p><h3>Model confidence</h3></div><span class="chart-total">LOADED DETECTIONS</span></div><div class="chart-box"><canvas id="confidence-chart" role="img" aria-label="Histogram of model confidence scores"></canvas><div class="chart-state">No confidence scores available.</div></div><p class="chart-note">Scores are model confidence, not calibrated probabilities; rule-based records have no score.</p></article>
+            <article class="card chart-card"><div class="card-heading"><div><p class="eyebrow">SOURCE IP</p><h3>Most frequent sources</h3></div><span class="chart-total">LOADED ALERTS</span></div><div class="ranking-list" id="attacker-ranking" aria-label="Ranked alert source IPs"><div class="chart-state">No source data available.</div></div></article>
+            <article class="card chart-card"><div class="card-heading"><div><p class="eyebrow">DESTINATION PORT</p><h3>Top targeted ports</h3></div><span class="chart-total">FROM ALERT FEATURES</span></div><div class="ranking-list" id="port-ranking" aria-label="Ranked destination ports from alert feature records"><div class="chart-state">Port data not available from loaded alerts.</div></div></article>
+            <article class="card chart-card"><div class="card-heading"><div><p class="eyebrow">IP PROTOCOL</p><h3>Protocol mix</h3></div><span class="chart-total">LOADED ALERTS</span></div><div class="chart-box"><canvas id="protocol-chart" role="img" aria-label="Doughnut chart of observed protocols"></canvas><div class="chart-state">No protocol data available.</div></div></article>
+            <article class="card chart-card heatmap-card"><div class="card-heading"><div><p class="eyebrow">TIME × CLASS</p><h3>Recent activity heatmap</h3></div><span class="chart-total">LOADED ALERTS ONLY</span></div><div class="heatmap-scroll"><div class="heatmap" id="heatmap" role="table" aria-label="Recent alerts by hour and threat class"><div class="chart-state">Loading alert details…</div></div></div><p class="chart-note">Recent loaded records only; not a complete historical class-by-hour series.</p></article>
+            <article class="card chart-card limitation-card"><div class="card-heading"><div><p class="eyebrow">DATA AVAILABILITY</p><h3>Metrics we will not guess</h3></div></div><div class="limitation-list"><p><strong>Attack rate:</strong> unavailable because the API does not expose a total observed-flow denominator.</p><p><strong>Class-stacked timeline:</strong> unavailable; the timeline endpoint returns hourly totals only.</p><p><strong>Enforced blocks:</strong> zero; all recorded actions are dry-run and do not change the host firewall.</p></div></article>
+          </div>
+        </section>
+
+        <section class="page-section" id="detections" aria-labelledby="detections-title">
+          <div class="section-title-row"><div><p class="eyebrow">PERSISTED CLASSIFICATIONS</p><h2 id="detections-title">Detections</h2></div><div class="table-toolbar"><label class="field-inline" for="detection-search"><span class="sr-only">Search detections</span><input id="detection-search" type="search" placeholder="Filter loaded rows…" /></label><button class="button button-secondary" id="feed-pause" type="button" aria-pressed="false">Pause feed</button><span class="new-events-pill" id="new-events-pill" hidden>0 new</span><button class="button button-secondary" id="density-toggle" type="button" aria-pressed="false">Comfortable rows</button><button class="button button-secondary" id="detection-export" type="button">Export CSV</button></div></div>
+          <div class="filter-chips" id="detection-class-chips" role="group" aria-label="Filter detections by class"></div>
+          <div class="card table-card"><div class="table-meta"><span id="detection-page-label">Sign in to view detections</span><span class="table-state" id="detection-state">—</span></div><div class="table-scroll"><table id="detection-table"><thead><tr><th><button data-sort="id" type="button">ID <span aria-hidden="true">↕</span></button></th><th><button data-sort="timestamp" type="button">TIME <span aria-hidden="true">↕</span></button></th><th>SOURCE → DESTINATION</th><th><button data-sort="predicted_class" type="button">CLASS <span aria-hidden="true">↕</span></button></th><th>MODEL CONFIDENCE</th><th>ACTION</th><th>BUNDLE / SOURCE</th></tr></thead><tbody id="detection-body"><tr><td colspan="7" class="table-message">Sign in to load persisted detections.</td></tr></tbody></table></div><div class="table-pagination"><span id="detection-pagination-label">—</span><div><button class="button button-secondary" id="detection-prev" type="button" disabled>Previous</button><button class="button button-secondary" id="detection-next" type="button" disabled>Next</button></div></div></div>
+        </section>
+
+        <section class="page-section" id="alerts" aria-labelledby="alerts-title">
+          <div class="section-title-row"><div><p class="eyebrow">CORRELATED EVENTS</p><h2 id="alerts-title">Alerts</h2></div><div class="table-toolbar"><label class="field-inline" for="alert-search"><span class="sr-only">Search alerts</span><input id="alert-search" type="search" placeholder="Filter loaded rows…" /></label><button class="button button-secondary" id="alert-export" type="button">Export CSV</button></div></div>
+          <div class="card table-card"><div class="table-meta"><span id="alert-page-label">Sign in to view alerts</span><span class="table-state" id="alert-state">—</span></div><div class="table-scroll"><table><thead><tr><th>ID</th><th>TIME</th><th>SOURCE → DESTINATION</th><th>PROTOCOL</th><th>CLASS / SEVERITY</th><th>INSPECT</th></tr></thead><tbody id="alert-body"><tr><td colspan="6" class="table-message">Sign in to load persisted alerts.</td></tr></tbody></table></div><div class="table-pagination"><span id="alert-pagination-label">—</span><div><button class="button button-secondary" id="alert-prev" type="button" disabled>Previous</button><button class="button button-secondary" id="alert-next" type="button" disabled>Next</button></div></div></div>
+        </section>
+
+        <section class="page-section" id="actions" aria-labelledby="actions-title">
+          <div class="section-title-row"><div><p class="eyebrow">RESPONSE AUDIT / NO ENFORCEMENT</p><h2 id="actions-title">Response actions</h2></div></div>
+          <div class="dry-run-banner"><span aria-hidden="true">⛨</span><div><strong>DRY-RUN ONLY — no firewall change is made.</strong><p>These are recorded decisions, not proof that traffic was blocked or rate-limited.</p></div></div>
+          <div class="card table-card"><div class="table-meta"><span id="action-page-label">Sign in to view actions</span><span class="table-state">AUDIT RECORDS</span></div><div class="table-scroll"><table><thead><tr><th>ID</th><th>DETECTION</th><th>DECISION</th><th>CREATED</th><th>REVERSED</th><th>MODE</th></tr></thead><tbody id="action-body"><tr><td colspan="6" class="table-message">Sign in to load response records.</td></tr></tbody></table></div><div class="table-pagination"><span id="action-pagination-label">—</span><div><button class="button button-secondary" id="action-prev" type="button" disabled>Previous</button><button class="button button-secondary" id="action-next" type="button" disabled>Next</button></div></div></div>
+        </section>
+
+        <section class="page-section" id="model-status" aria-labelledby="model-title">
+          <div class="section-title-row"><div><p class="eyebrow">MODEL &amp; DATA PROVENANCE</p><h2 id="model-title">Model health</h2></div><span class="evaluation-badge" id="evaluation-badge">Evaluation status unavailable</span></div>
+          <div class="model-grid">
+            <article class="card model-card"><span class="eyebrow">ACTIVE BUNDLE</span><strong id="model-bundle">Unavailable</strong><span id="model-version" class="model-secondary">Registered version unavailable</span></article>
+            <article class="card model-card"><span class="eyebrow">SUPPORTED CLASSES</span><strong>7 classes</strong><span class="model-secondary">Benign · Botnet · Brute Force · DDoS · DoS · Port Scan · Web Attack</span></article>
+            <article class="card model-card"><span class="eyebrow">FEATURE CONTRACT</span><strong>12 ordered features</strong><span class="model-secondary">duration · packets · bytes · rates · ports · protocol</span></article>
+            <article class="card model-card"><span class="eyebrow">EVALUATION SPLIT</span><strong id="model-split">Not exposed by API</strong><span class="model-secondary" id="model-overlap">Check model metadata and evaluation report.</span></article>
+          </div>
+          <div class="card model-caveat"><span class="caveat-mark" aria-hidden="true">!</span><p id="model-caveat-text">A loaded model indicates availability only, not detection quality. Confidence scores are not calibrated probabilities. Review the evaluation methodology before interpreting classifications.</p></div>
+        </section>
+
+        <footer class="page-footer"><span>AEGISAI <span class="footer-separator">/</span> LOCAL NETWORK SENSOR</span><span>Prototype · dry-run response · evaluation caveats apply</span></footer>
+      </main>
+    </div>
+  </div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+  <aside class="detail-drawer" id="detail-drawer" aria-labelledby="drawer-title" aria-modal="true" role="dialog" hidden>
+    <div class="drawer-header"><div><p class="eyebrow" id="drawer-eyebrow">RECORD DETAIL</p><h2 id="drawer-title">Detection detail</h2></div><button class="icon-button" id="drawer-close" type="button" aria-label="Close details">×</button></div>
+    <div class="drawer-tabs" role="tablist" aria-label="Record detail views"><button id="drawer-tab-summary" type="button" role="tab" aria-selected="true" aria-controls="drawer-summary">Summary</button><button id="drawer-tab-features" type="button" role="tab" aria-selected="false" aria-controls="drawer-features">Features</button><button id="drawer-tab-raw" type="button" role="tab" aria-selected="false" aria-controls="drawer-raw">Raw JSON</button></div>
+    <div class="drawer-content">
+      <section id="drawer-summary" role="tabpanel" aria-labelledby="drawer-tab-summary"><div class="drawer-record-summary" id="drawer-record-summary">Select a row to inspect its API record.</div><div class="drawer-explanation"><div class="card-heading"><div><p class="eyebrow">EXPLANATION</p><h3>Feature-value view</h3></div></div><p class="chart-note">Values are returned by the explanation API. They are not calibrated probabilities or causal claims.</p><div id="drawer-explanation-bars" class="feature-list"></div></div></section>
+      <section id="drawer-features" role="tabpanel" aria-labelledby="drawer-tab-features" hidden><div class="card-heading"><div><p class="eyebrow">LIVE MODEL CONTRACT</p><h3>12 flow features</h3></div><button class="button button-secondary" id="copy-features" type="button">Copy JSON</button></div><div id="drawer-feature-grid" class="feature-grid"></div></section>
+      <section id="drawer-raw" role="tabpanel" aria-labelledby="drawer-tab-raw" hidden><div class="card-heading"><div><p class="eyebrow">SOURCE RECORD</p><h3>Raw API JSON</h3></div><button class="button button-secondary" id="copy-raw" type="button">Copy JSON</button></div><pre class="json-view" id="drawer-json">No record selected.</pre></section>
+    </div>
+  </aside>
+
+  <dialog class="modal" id="signin-dialog" aria-labelledby="signin-title">
+    <form class="modal-card" id="signin-form">
+      <button class="icon-button modal-close" type="button" data-close-dialog="signin-dialog" aria-label="Close sign-in">×</button>
+      <p class="eyebrow">SECURE OPERATOR ACCESS</p><h2 id="signin-title">Sign in to AegisAI</h2><p class="modal-copy">Use your configured account. Capture controls are available to administrators only.</p>
+      <label class="field" for="signin-username"><span>Username</span><input id="signin-username" name="username" autocomplete="username" required /></label>
+      <label class="field" for="signin-password"><span>Password</span><input id="signin-password" name="password" type="password" autocomplete="current-password" required /></label>
+      <p class="inline-error" id="signin-error" role="alert" hidden></p>
+      <button class="button button-primary button-full" id="signin-submit" type="submit">Sign in</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="help-dialog" aria-labelledby="help-title">
+    <div class="modal-card help-card"><button class="icon-button modal-close" type="button" data-close-dialog="help-dialog" aria-label="Close keyboard shortcuts">×</button><p class="eyebrow">QUICK NAVIGATION</p><h2 id="help-title">Keyboard shortcuts</h2><dl class="shortcut-list"><div><dt><kbd>/</kbd></dt><dd>Focus global search</dd></div><div><dt><kbd>g</kbd> then <kbd>d</kbd></dt><dd>Go to detections</dd></div><div><dt><kbd>?</kbd></dt><dd>Open this help</dd></div><div><dt><kbd>Esc</kbd></dt><dd>Close drawer or dialog</dd></div></dl></div>
+  </dialog>
+
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>

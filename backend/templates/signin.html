@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#071311" />
+  <title>Sign in | AegisAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/site.css" />
+</head>
+<body class="signin-page">
+  <div class="site-grain" aria-hidden="true"></div>
+  <header class="signin-nav"><a class="wordmark" href="/" aria-label="Back to AegisAI home"><span class="wordmark-mark">A</span><span>AEGIS<span class="wordmark-light">AI</span></span></a><a class="text-link" href="/">Back to home <span aria-hidden="true">&larr;</span></a></header>
+  <main class="signin-layout">
+    <section class="signin-context">
+      <p class="eyebrow"><span class="pulse-dot"></span> OPERATOR ACCESS</p>
+      <h1>Good security<br /><em>starts with context.</em></h1>
+      <p>Sign in to inspect detections, review flow activity, and control the local sensor.</p>
+      <div class="signin-context-footer"><span class="status-led"></span><span>LOCAL PROTOTYPE / DRY-RUN RESPONSE</span></div>
+    </section>
+    <section class="signin-card" aria-labelledby="signin-title">
+      <div class="signin-card-head"><span class="eyebrow">AEGISAI CONSOLE</span><span class="signin-lock" aria-hidden="true">01</span></div>
+      <h2 id="signin-title">Sign in</h2>
+      <p class="signin-subtitle">Use your project account to continue.</p>
+      <form id="signin-form" class="signin-form">
+        <label for="signin-username">Username</label>
+        <input id="signin-username" name="username" autocomplete="username" required autofocus />
+        <label for="signin-password">Password</label>
+        <input id="signin-password" name="password" type="password" autocomplete="current-password" required />
+        <p id="signin-error" class="signin-error" role="alert" aria-live="polite"></p>
+        <button id="signin-submit" class="button button-primary signin-submit" type="submit"><span>Continue to console</span><span aria-hidden="true">&rarr;</span></button>
+      </form>
+      <p class="signin-safety"><span class="status-led"></span> Response actions remain dry-run. No firewall rules are changed.</p>
+    </section>
+  </main>
+  <footer class="signin-footer"><span>AegisAI / Applied network defense prototype</span><a href="/dashboard">Open dashboard <span aria-hidden="true">&rarr;</span></a></footer>
+  <script src="/static/signin.js" defer></script>
+</body>
+</html>

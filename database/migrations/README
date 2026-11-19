@@ -1,0 +1,16 @@
+# Database migrations
+
+The initial Alembic revision is a frozen schema baseline. For a new database,
+`python -m alembic upgrade head` creates the schema. Existing unversioned
+databases are upgraded through the compatibility migration in
+`database/init_db.py`, stamped at the baseline, and then advanced by Alembic.
+
+Before upgrading an existing deployment, create and verify a database backup.
+When changing models, generate a new revision with
+`python -m alembic revision --autogenerate -m "describe change"`, inspect and
+edit the generated operations, and run migration tests before release. Never
+modify a revision that has already been applied to a deployment.
+
+SQLite migrations run in batch mode. PostgreSQL migrations are represented by
+the same SQLAlchemy/Alembic revisions but still require a live PostgreSQL
+integration test before claiming the deployment path is verified.

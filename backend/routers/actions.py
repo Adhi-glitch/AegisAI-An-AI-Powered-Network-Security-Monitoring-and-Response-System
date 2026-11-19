@@ -5,10 +5,11 @@ POST /api/v1/actions/unblock   — manual IP unblock (auth required)
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
-from backend.auth import get_current_admin
+from backend.auth import get_current_admin, get_current_user
+from backend.threat_policy import harmful_detection_filters
 from database import models
 from database.init_db import SessionLocal
 
@@ -30,15 +31,22 @@ def _action_to_dict(a: models.Action) -> dict:
 
 
 @router.get("", summary="List response actions (paginated)")
-def list_actions(page: int = 1, limit: int = 50):
+def list_actions(
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=50, ge=1, le=200),
+    _user: dict = Depends(get_current_user),
+):
     """Return all response actions newest-first with pagination."""
-    page = max(1, page)
-    limit = min(limit, 200)
     db = SessionLocal()
     try:
-        total = db.query(models.Action).count()
-        items = (
+        query = (
             db.query(models.Action)
+            .join(models.Detection, models.Action.detection_id == models.Detection.id)
+            .filter(*harmful_detection_filters())
+        )
+        total = query.count()
+        items = (
+            query
             .order_by(models.Action.id.desc())
             .offset((page - 1) * limit)
             .limit(limit)

@@ -1,0 +1,355 @@
+{
+  "evaluated_at_utc": "2026-11-14T19:16:49.851348+00:00",
+  "status": "best_effort_not_release_qualified",
+  "dataset": {
+    "root": "data/phase1",
+    "sample_rows": 413104,
+    "sample_sha256": "0f21cd964f787dfadc23acb1e0fce15651a67f56e9a5b69ef1f71b6c6ea0f120",
+    "rows_per_source_group_class_cap": 10000,
+    "sample_seed": 42,
+    "source_group_count_by_class": {
+      "Benign": 24,
+      "Botnet": 14,
+      "Brute Force": 2,
+      "DDoS": 2,
+      "DoS": 4,
+      "Port Scan": 4,
+      "Web Attack": 1
+    },
+    "source_groups_by_class": {
+      "Benign": [
+        "Bot-IoT/Full5pc",
+        "CIC-IDS-2017/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+        "CIC-IDS-2017/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+        "CIC-IDS-2017/Friday-WorkingHours-Morning.pcap_ISCX.csv",
+        "CIC-IDS-2017/Monday-WorkingHours.pcap_ISCX.csv",
+        "CIC-IDS-2017/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+        "CIC-IDS-2017/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "CIC-IDS-2017/Tuesday-WorkingHours.pcap_ISCX.csv",
+        "CIC-IDS-2017/Wednesday-workingHours.pcap_ISCX.csv",
+        "CTU-13/1-Neris-20110810.binetflow.parquet",
+        "CTU-13/10-Rbot-20110818.binetflow.parquet",
+        "CTU-13/11-Rbot-20110818-2.binetflow.parquet",
+        "CTU-13/12-NsisAy-20110819.binetflow.parquet",
+        "CTU-13/13-Virut-20110815-3.binetflow.parquet",
+        "CTU-13/2-Neris-20110811.binetflow.parquet",
+        "CTU-13/3-Rbot-20110812.binetflow.parquet",
+        "CTU-13/4-Rbot-20110815.binetflow.parquet",
+        "CTU-13/5-Virut-20110815-2.binetflow.parquet",
+        "CTU-13/6-Menti-20110816.binetflow.parquet",
+        "CTU-13/7-Sogou-20110816-2.binetflow.parquet",
+        "CTU-13/8-Murlo-20110816-3.binetflow.parquet",
+        "CTU-13/9-Neris-20110817.binetflow.parquet",
+        "NSL-KDD/official-train-test",
+        "UNSW-NB15/combined-capture-set"
+      ],
+      "Botnet": [
+        "CIC-IDS-2017/Friday-WorkingHours-Morning.pcap_ISCX.csv",
+        "CTU-13/1-Neris-20110810.binetflow.parquet",
+        "CTU-13/10-Rbot-20110818.binetflow.parquet",
+        "CTU-13/11-Rbot-20110818-2.binetflow.parquet",
+        "CTU-13/12-NsisAy-20110819.binetflow.parquet",
+        "CTU-13/13-Virut-20110815-3.binetflow.parquet",
+        "CTU-13/2-Neris-20110811.binetflow.parquet",
+        "CTU-13/3-Rbot-20110812.binetflow.parquet",
+        "CTU-13/4-Rbot-20110815.binetflow.parquet",
+        "CTU-13/5-Virut-20110815-2.binetflow.parquet",
+        "CTU-13/6-Menti-20110816.binetflow.parquet",
+        "CTU-13/7-Sogou-20110816-2.binetflow.parquet",
+        "CTU-13/8-Murlo-20110816-3.binetflow.parquet",
+        "CTU-13/9-Neris-20110817.binetflow.parquet"
+      ],
+      "Brute Force": [
+        "CIC-IDS-2017/Tuesday-WorkingHours.pcap_ISCX.csv",
+        "NSL-KDD/official-train-test"
+      ],
+      "DDoS": [
+        "Bot-IoT/Full5pc",
+        "CIC-IDS-2017/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+      ],
+      "DoS": [
+        "Bot-IoT/Full5pc",
+        "CIC-IDS-2017/Wednesday-workingHours.pcap_ISCX.csv",
+        "NSL-KDD/official-train-test",
+        "UNSW-NB15/combined-capture-set"
+      ],
+      "Port Scan": [
+        "Bot-IoT/Full5pc",
+        "CIC-IDS-2017/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+        "NSL-KDD/official-train-test",
+        "UNSW-NB15/combined-capture-set"
+      ],
+      "Web Attack": [
+        "CIC-IDS-2017/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
+      ]
+    }
+  },
+  "evaluation": {
+    "strategy": "two-fold StratifiedGroupKFold; each evaluated row is held out once",
+    "group_seed": 0,
+    "group_overlap": 0,
+    "evaluated_rows": 410924,
+    "evaluated_classes": [
+      "Benign",
+      "Botnet",
+      "Brute Force",
+      "DDoS",
+      "DoS",
+      "Port Scan"
+    ],
+    "web_attack": {
+      "status": "not_independently_evaluable",
+      "reason": "Its sole source group cannot be in both a model's training and held-out data.",
+      "excluded_held_out_rows": 2180
+    },
+    "folds": [
+      {
+        "fold": 0,
+        "train_rows": 197911,
+        "held_out_rows": 215193,
+        "evaluated_rows": 215193,
+        "train_source_groups": [
+          "Bot-IoT/Full5pc",
+          "CIC-IDS-2017/Friday-WorkingHours-Morning.pcap_ISCX.csv",
+          "CIC-IDS-2017/Monday-WorkingHours.pcap_ISCX.csv",
+          "CIC-IDS-2017/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+          "CIC-IDS-2017/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+          "CTU-13/13-Virut-20110815-3.binetflow.parquet",
+          "CTU-13/2-Neris-20110811.binetflow.parquet",
+          "CTU-13/5-Virut-20110815-2.binetflow.parquet",
+          "CTU-13/6-Menti-20110816.binetflow.parquet",
+          "CTU-13/7-Sogou-20110816-2.binetflow.parquet",
+          "CTU-13/9-Neris-20110817.binetflow.parquet",
+          "NSL-KDD/official-train-test"
+        ],
+        "held_out_source_groups": [
+          "CIC-IDS-2017/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+          "CIC-IDS-2017/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+          "CIC-IDS-2017/Tuesday-WorkingHours.pcap_ISCX.csv",
+          "CIC-IDS-2017/Wednesday-workingHours.pcap_ISCX.csv",
+          "CTU-13/1-Neris-20110810.binetflow.parquet",
+          "CTU-13/10-Rbot-20110818.binetflow.parquet",
+          "CTU-13/11-Rbot-20110818-2.binetflow.parquet",
+          "CTU-13/12-NsisAy-20110819.binetflow.parquet",
+          "CTU-13/3-Rbot-20110812.binetflow.parquet",
+          "CTU-13/4-Rbot-20110815.binetflow.parquet",
+          "CTU-13/8-Murlo-20110816-3.binetflow.parquet",
+          "UNSW-NB15/combined-capture-set"
+        ],
+        "evaluated_source_groups_by_class": {
+          "Benign": 12,
+          "Botnet": 7,
+          "Brute Force": 1,
+          "DDoS": 1,
+          "DoS": 2,
+          "Port Scan": 2
+        },
+        "training_classes": [
+          "Benign",
+          "Botnet",
+          "Brute Force",
+          "DDoS",
+          "DoS",
+          "Port Scan",
+          "Web Attack"
+        ],
+        "excluded_web_attack_rows": 0
+      },
+      {
+        "fold": 1,
+        "train_rows": 215193,
+        "held_out_rows": 197911,
+        "evaluated_rows": 195731,
+        "train_source_groups": [
+          "CIC-IDS-2017/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+          "CIC-IDS-2017/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+          "CIC-IDS-2017/Tuesday-WorkingHours.pcap_ISCX.csv",
+          "CIC-IDS-2017/Wednesday-workingHours.pcap_ISCX.csv",
+          "CTU-13/1-Neris-20110810.binetflow.parquet",
+          "CTU-13/10-Rbot-20110818.binetflow.parquet",
+          "CTU-13/11-Rbot-20110818-2.binetflow.parquet",
+          "CTU-13/12-NsisAy-20110819.binetflow.parquet",
+          "CTU-13/3-Rbot-20110812.binetflow.parquet",
+          "CTU-13/4-Rbot-20110815.binetflow.parquet",
+          "CTU-13/8-Murlo-20110816-3.binetflow.parquet",
+          "UNSW-NB15/combined-capture-set"
+        ],
+        "held_out_source_groups": [
+          "Bot-IoT/Full5pc",
+          "CIC-IDS-2017/Friday-WorkingHours-Morning.pcap_ISCX.csv",
+          "CIC-IDS-2017/Monday-WorkingHours.pcap_ISCX.csv",
+          "CIC-IDS-2017/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+          "CIC-IDS-2017/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+          "CTU-13/13-Virut-20110815-3.binetflow.parquet",
+          "CTU-13/2-Neris-20110811.binetflow.parquet",
+          "CTU-13/5-Virut-20110815-2.binetflow.parquet",
+          "CTU-13/6-Menti-20110816.binetflow.parquet",
+          "CTU-13/7-Sogou-20110816-2.binetflow.parquet",
+          "CTU-13/9-Neris-20110817.binetflow.parquet",
+          "NSL-KDD/official-train-test"
+        ],
+        "evaluated_source_groups_by_class": {
+          "Benign": 12,
+          "Botnet": 7,
+          "Brute Force": 1,
+          "DDoS": 1,
+          "DoS": 2,
+          "Port Scan": 2
+        },
+        "training_classes": [
+          "Benign",
+          "Botnet",
+          "Brute Force",
+          "DDoS",
+          "DoS",
+          "Port Scan"
+        ],
+        "excluded_web_attack_rows": 2180
+      }
+    ]
+  },
+  "model": {
+    "estimator": "RandomForestClassifier",
+    "n_estimators": 120,
+    "class_weight": "balanced_subsample",
+    "max_depth": 28,
+    "min_samples_leaf": 2,
+    "random_state": 42,
+    "sklearn_version": "1.9.0",
+    "feature_columns": [
+      "duration",
+      "src_packets",
+      "dst_packets",
+      "src_bytes",
+      "dst_bytes",
+      "total_packets",
+      "total_bytes",
+      "packet_rate",
+      "byte_rate",
+      "src_port",
+      "dst_port",
+      "protocol"
+    ],
+    "hyperparameter_tuning": false
+  },
+  "approved_thresholds": {
+    "attack_recall_min": 0.9,
+    "attack_precision_min": 0.8,
+    "benign_false_alarm_rate_max": 0.005
+  },
+  "results": {
+    "per_class": {
+      "Benign": {
+        "precision": 0.6201119388098237,
+        "recall": 0.9441332540774133,
+        "f1-score": 0.7485633394853307,
+        "support": 230477.0
+      },
+      "Botnet": {
+        "precision": 0.8345649424139538,
+        "recall": 0.5314191241927962,
+        "f1-score": 0.6493542371710753,
+        "support": 70769.0
+      },
+      "Brute Force": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 11284.0
+      },
+      "DDoS": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 20000.0
+      },
+      "DoS": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 40000.0
+      },
+      "Port Scan": {
+        "precision": 0.3993915688830943,
+        "recall": 0.11968015835807679,
+        "f1-score": 0.18417202749554099,
+        "support": 38394.0
+      }
+    },
+    "attack_threshold_status": {
+      "Botnet": "fail",
+      "Brute Force": "fail",
+      "DDoS": "fail",
+      "DoS": "fail",
+      "Port Scan": "fail"
+    },
+    "benign_false_alarm_rate": 0.055866745922586634,
+    "benign_false_alarm_threshold_status": "fail",
+    "confusion_matrix": {
+      "labels": [
+        "Benign",
+        "Botnet",
+        "Brute Force",
+        "DDoS",
+        "DoS",
+        "Port Scan"
+      ],
+      "values": [
+        [
+          217601,
+          6908,
+          27,
+          6,
+          268,
+          5321
+        ],
+        [
+          33161,
+          37608,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          9325,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          19995,
+          0,
+          0,
+          0,
+          0,
+          5
+        ],
+        [
+          37312,
+          546,
+          0,
+          0,
+          0,
+          1584
+        ],
+        [
+          33512,
+          1,
+          0,
+          0,
+          284,
+          4595
+        ]
+      ]
+    }
+  },
+  "limitations": [
+    "This is a best-effort two-way group evaluation, not the approved three-way train/validation/test release gate.",
+    "Brute Force and DDoS have only two source groups each; their per-fold training and held-out evidence is limited.",
+    "Web Attack has one source group and has no independent held-out metric.",
+    "No confidence intervals were computed."
+  ]
+}

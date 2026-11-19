@@ -6,15 +6,20 @@ POST /api/v1/alerts              — ingest alert + run detection (auth required
 """
 from __future__ import annotations
 
-import asyncio
 from typing import Any, Dict, Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from agents.coordinator.coordinator import load_runtime, process_features
-from agents.feature_extraction.csv_extractor import extract_from_row
-from backend.auth import get_current_user
+from agents.coordinator.coordinator import (
+    ModelUnavailableError,
+    get_recorded_action,
+    process_features,
+)
+from agents.detection.live_rules import is_rule_detection
+from agents.detection.threat_policy import threat_severity
+from backend.auth import get_current_admin, get_current_user
+from backend.threat_policy import harmful_detection_filters
 from backend.routers.ws import manager as ws_manager
 from database import models
 from database.init_db import SessionLocal
@@ -49,27 +54,43 @@ class PaginatedAlerts(BaseModel):
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def _alert_to_dict(a: models.Alert) -> dict:
+    severity = next(
+        (
+            threat_severity(d.predicted_class, d.confidence)
+            for d in a.detections or []
+            if threat_severity(d.predicted_class, d.confidence) is not None
+        ),
+        None,
+    )
     return {
         "id": a.id,
         "timestamp": a.timestamp.isoformat() if a.timestamp else None,
         "source_ip": a.source_ip,
         "dest_ip": a.dest_ip,
         "protocol": a.protocol,
-        "severity": getattr(a, "severity", None),
+        "severity": severity or getattr(a, "severity", None),
     }
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 @router.get("", summary="List alerts (paginated)")
-def list_alerts(page: int = 1, limit: int = 50):
+def list_alerts(
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=50, ge=1, le=200),
+    _user: dict = Depends(get_current_user),
+):
     """Return a paginated list of alerts, newest first."""
-    page = max(1, page)
-    limit = min(limit, 200)
     db = SessionLocal()
     try:
-        total = db.query(models.Alert).count()
-        items = (
+        query = (
             db.query(models.Alert)
+            .join(models.Detection, models.Detection.alert_id == models.Alert.id)
+            .filter(*harmful_detection_filters())
+            .distinct()
+        )
+        total = query.count()
+        items = (
+            query
             .order_by(models.Alert.timestamp.desc())
             .offset((page - 1) * limit)
             .limit(limit)
@@ -86,11 +107,19 @@ def list_alerts(page: int = 1, limit: int = 50):
 
 
 @router.get("/{alert_id}", summary="Single alert detail")
-def get_alert(alert_id: int):
+def get_alert(
+    alert_id: int,
+    _user: dict = Depends(get_current_user),
+):
     """Return full detail for a single alert including raw features."""
     db = SessionLocal()
     try:
-        a = db.query(models.Alert).filter(models.Alert.id == alert_id).first()
+        a = (
+            db.query(models.Alert)
+            .join(models.Detection, models.Detection.alert_id == models.Alert.id)
+            .filter(models.Alert.id == alert_id, *harmful_detection_filters())
+            .first()
+        )
         if not a:
             raise HTTPException(status_code=404, detail="Alert not found")
         result = _alert_to_dict(a)
@@ -102,8 +131,14 @@ def get_alert(alert_id: int):
                 "predicted_class": d.predicted_class,
                 "confidence": d.confidence,
                 "model_version": d.model_version,
+                "detection_source": d.detection_source,
+                "severity": a.severity,
             }
             for d in (a.detections or [])
+            if (
+                threat_severity(d.predicted_class, d.confidence) is not None
+                or is_rule_detection(d.detection_source, d.predicted_class)
+            )
         ]
         return result
     finally:
@@ -113,12 +148,11 @@ def get_alert(alert_id: int):
 @router.post("", summary="Ingest alert and run detection")
 async def ingest_alert(
     alert: AlertIn,
-    current_user: dict = Depends(get_current_user),
+    _admin: dict = Depends(get_current_admin),
 ):
     """
-    Store an alert, optionally run detection, persist Detection + Action,
-    and broadcast the result to all WebSocket clients.
-    Requires authentication.
+    Persist and broadcast only a supported threat classification.
+    Requires administrator access; benign and low-confidence flows are not stored.
     """
     db = SessionLocal()
     try:
@@ -128,65 +162,73 @@ async def ingest_alert(
         if alert.protocol:
             features.setdefault("protocol", alert.protocol)
 
+        try:
+            result = process_features(features) if alert.run_detection else None
+        except ModelUnavailableError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        severity = (
+            threat_severity(result.get("predicted"), result.get("confidence"))
+            if result is not None
+            else None
+        )
+        if result is None or severity is None:
+            return {
+                "id": None,
+                "detection_id": None,
+                "action_id": None,
+                "recorded": False,
+                "result": result,
+            }
+
         a = models.Alert(
             source_ip=alert.source_ip,
             dest_ip=alert.dest_ip,
             protocol=alert.protocol,
             raw_features=features,
+            severity=severity,
         )
         db.add(a)
+        db.flush()
+
+        det = models.Detection(
+            alert_id=a.id,
+            predicted_class=str(result["predicted"]),
+            confidence=str(result["confidence"]),
+            model_version="active_bundle",
+            detection_source="model",
+        )
+        db.add(det)
+        db.flush()
+        detection_id = det.id
+
+        act = models.Action(
+            detection_id=det.id,
+            action_type=get_recorded_action(result),
+        )
+        db.add(act)
         db.commit()
         db.refresh(a)
+        db.refresh(act)
+        action_id = act.id
 
-        result = None
-        detection_id = None
-        action_id = None
-
-        if alert.run_detection:
-            result = process_features(features)
-
-            det = models.Detection(
-                alert_id=a.id,
-                predicted_class=str(result["predicted"]),
-                confidence=str(result["confidence"]),
-                model_version="baseline_rf",
-            )
-            db.add(det)
-            db.commit()
-            db.refresh(det)
-            detection_id = det.id
-
-            act = models.Action(
-                detection_id=det.id,
-                action_type=str(
-                    result.get("action")
-                    or result.get("response", {}).get("status", "log")
-                ),
-            )
-            db.add(act)
-            db.commit()
-            db.refresh(act)
-            action_id = act.id
-
-            # Broadcast to live WebSocket feed
-            broadcast_payload = {
-                "id": detection_id,
-                "alert_id": a.id,
-                "predicted_class": result["predicted"],
-                "confidence": result["confidence"],
-                "source_ip": alert.source_ip,
-                "action": result.get("action"),
-                "timestamp": a.timestamp.isoformat() if a.timestamp else None,
-            }
-            try:
-                await ws_manager.broadcast(broadcast_payload)
-            except Exception:
-                pass
+        broadcast_payload = {
+            "id": detection_id,
+            "alert_id": a.id,
+            "predicted_class": result["predicted"],
+            "confidence": result["confidence"],
+            "severity": severity,
+            "source_ip": alert.source_ip,
+            "action": get_recorded_action(result),
+            "timestamp": a.timestamp.isoformat() if a.timestamp else None,
+        }
+        await ws_manager.broadcast(broadcast_payload)
 
         return {
             "id": a.id,
             "detection_id": detection_id,
             "action_id": action_id,
+            "recorded": True,
+            "severity": severity,
             "result": result,
         }
     finally:

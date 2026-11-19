@@ -1,0 +1,612 @@
+{
+  "evaluated_at_utc": "2026-11-14T19:35:11.785903+00:00",
+  "status": "thresholds_not_met",
+  "dataset": {
+    "root": "data/phase1",
+    "sample_rows": 573986,
+    "sample_sha256": "9f4e3bb47fadceaa49eb5c9f68fb494a089f3317a3bfc499c15b1edf2cfbf631",
+    "rows_per_source_group_class_cap": 10000,
+    "sample_seed": 42,
+    "source_group_count_by_class": {
+      "Benign": 34,
+      "Botnet": 15,
+      "Brute Force": 3,
+      "DDoS": 4,
+      "DoS": 6,
+      "Port Scan": 4,
+      "Web Attack": 3
+    },
+    "source_groups_by_class": {
+      "Benign": [
+        "Bot-IoT/Full5pc",
+        "CIC-IDS-2017/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+        "CIC-IDS-2017/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+        "CIC-IDS-2017/Friday-WorkingHours-Morning.pcap_ISCX.csv",
+        "CIC-IDS-2017/Monday-WorkingHours.pcap_ISCX.csv",
+        "CIC-IDS-2017/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+        "CIC-IDS-2017/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "CIC-IDS-2017/Tuesday-WorkingHours.pcap_ISCX.csv",
+        "CIC-IDS-2017/Wednesday-workingHours.pcap_ISCX.csv",
+        "CSE-CIC-IDS2018/Botnet-Friday-02-03-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/Bruteforce-Wednesday-14-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/DDoS1-Tuesday-20-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/DDoS2-Wednesday-21-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/DoS1-Thursday-15-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/DoS2-Friday-16-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/Infil1-Wednesday-28-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/Infil2-Thursday-01-03-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/Web1-Thursday-22-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/Web2-Friday-23-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CTU-13/1-Neris-20110810.binetflow.parquet",
+        "CTU-13/10-Rbot-20110818.binetflow.parquet",
+        "CTU-13/11-Rbot-20110818-2.binetflow.parquet",
+        "CTU-13/12-NsisAy-20110819.binetflow.parquet",
+        "CTU-13/13-Virut-20110815-3.binetflow.parquet",
+        "CTU-13/2-Neris-20110811.binetflow.parquet",
+        "CTU-13/3-Rbot-20110812.binetflow.parquet",
+        "CTU-13/4-Rbot-20110815.binetflow.parquet",
+        "CTU-13/5-Virut-20110815-2.binetflow.parquet",
+        "CTU-13/6-Menti-20110816.binetflow.parquet",
+        "CTU-13/7-Sogou-20110816-2.binetflow.parquet",
+        "CTU-13/8-Murlo-20110816-3.binetflow.parquet",
+        "CTU-13/9-Neris-20110817.binetflow.parquet",
+        "NSL-KDD/official-train-test",
+        "UNSW-NB15/combined-capture-set"
+      ],
+      "Botnet": [
+        "CIC-IDS-2017/Friday-WorkingHours-Morning.pcap_ISCX.csv",
+        "CSE-CIC-IDS2018/Botnet-Friday-02-03-2018_TrafficForML_CICFlowMeter.parquet",
+        "CTU-13/1-Neris-20110810.binetflow.parquet",
+        "CTU-13/10-Rbot-20110818.binetflow.parquet",
+        "CTU-13/11-Rbot-20110818-2.binetflow.parquet",
+        "CTU-13/12-NsisAy-20110819.binetflow.parquet",
+        "CTU-13/13-Virut-20110815-3.binetflow.parquet",
+        "CTU-13/2-Neris-20110811.binetflow.parquet",
+        "CTU-13/3-Rbot-20110812.binetflow.parquet",
+        "CTU-13/4-Rbot-20110815.binetflow.parquet",
+        "CTU-13/5-Virut-20110815-2.binetflow.parquet",
+        "CTU-13/6-Menti-20110816.binetflow.parquet",
+        "CTU-13/7-Sogou-20110816-2.binetflow.parquet",
+        "CTU-13/8-Murlo-20110816-3.binetflow.parquet",
+        "CTU-13/9-Neris-20110817.binetflow.parquet"
+      ],
+      "Brute Force": [
+        "CIC-IDS-2017/Tuesday-WorkingHours.pcap_ISCX.csv",
+        "CSE-CIC-IDS2018/Bruteforce-Wednesday-14-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "NSL-KDD/official-train-test"
+      ],
+      "DDoS": [
+        "Bot-IoT/Full5pc",
+        "CIC-IDS-2017/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+        "CSE-CIC-IDS2018/DDoS1-Tuesday-20-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/DDoS2-Wednesday-21-02-2018_TrafficForML_CICFlowMeter.parquet"
+      ],
+      "DoS": [
+        "Bot-IoT/Full5pc",
+        "CIC-IDS-2017/Wednesday-workingHours.pcap_ISCX.csv",
+        "CSE-CIC-IDS2018/DoS1-Thursday-15-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/DoS2-Friday-16-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "NSL-KDD/official-train-test",
+        "UNSW-NB15/combined-capture-set"
+      ],
+      "Port Scan": [
+        "Bot-IoT/Full5pc",
+        "CIC-IDS-2017/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+        "NSL-KDD/official-train-test",
+        "UNSW-NB15/combined-capture-set"
+      ],
+      "Web Attack": [
+        "CIC-IDS-2017/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "CSE-CIC-IDS2018/Web1-Thursday-22-02-2018_TrafficForML_CICFlowMeter.parquet",
+        "CSE-CIC-IDS2018/Web2-Friday-23-02-2018_TrafficForML_CICFlowMeter.parquet"
+      ]
+    }
+  },
+  "evaluation": {
+    "strategy": "group-disjoint train/validation/test holdouts",
+    "group_seed": 0,
+    "group_overlap": 0,
+    "evaluated_classes": [
+      "Benign",
+      "Botnet",
+      "Brute Force",
+      "DDoS",
+      "DoS",
+      "Port Scan",
+      "Web Attack"
+    ],
+    "splits": {
+      "train": {
+        "rows": 359937,
+        "source_group_count": 22,
+        "source_groups": [
+          "CIC-IDS-2017/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+          "CIC-IDS-2017/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+          "CIC-IDS-2017/Friday-WorkingHours-Morning.pcap_ISCX.csv",
+          "CIC-IDS-2017/Monday-WorkingHours.pcap_ISCX.csv",
+          "CIC-IDS-2017/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+          "CIC-IDS-2017/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+          "CIC-IDS-2017/Tuesday-WorkingHours.pcap_ISCX.csv",
+          "CIC-IDS-2017/Wednesday-workingHours.pcap_ISCX.csv",
+          "CSE-CIC-IDS2018/DDoS2-Wednesday-21-02-2018_TrafficForML_CICFlowMeter.parquet",
+          "CSE-CIC-IDS2018/DoS1-Thursday-15-02-2018_TrafficForML_CICFlowMeter.parquet",
+          "CSE-CIC-IDS2018/DoS2-Friday-16-02-2018_TrafficForML_CICFlowMeter.parquet",
+          "CSE-CIC-IDS2018/Infil2-Thursday-01-03-2018_TrafficForML_CICFlowMeter.parquet",
+          "CTU-13/1-Neris-20110810.binetflow.parquet",
+          "CTU-13/11-Rbot-20110818-2.binetflow.parquet",
+          "CTU-13/2-Neris-20110811.binetflow.parquet",
+          "CTU-13/3-Rbot-20110812.binetflow.parquet",
+          "CTU-13/5-Virut-20110815-2.binetflow.parquet",
+          "CTU-13/6-Menti-20110816.binetflow.parquet",
+          "CTU-13/7-Sogou-20110816-2.binetflow.parquet",
+          "CTU-13/8-Murlo-20110816-3.binetflow.parquet",
+          "CTU-13/9-Neris-20110817.binetflow.parquet",
+          "UNSW-NB15/combined-capture-set"
+        ],
+        "source_groups_by_class": {
+          "Benign": 22,
+          "Botnet": 10,
+          "Brute Force": 1,
+          "DDoS": 2,
+          "DoS": 4,
+          "Port Scan": 2,
+          "Web Attack": 1
+        }
+      },
+      "validation": {
+        "rows": 91031,
+        "source_group_count": 5,
+        "source_groups": [
+          "CSE-CIC-IDS2018/DDoS1-Tuesday-20-02-2018_TrafficForML_CICFlowMeter.parquet",
+          "CSE-CIC-IDS2018/Web1-Thursday-22-02-2018_TrafficForML_CICFlowMeter.parquet",
+          "CTU-13/10-Rbot-20110818.binetflow.parquet",
+          "CTU-13/4-Rbot-20110815.binetflow.parquet",
+          "NSL-KDD/official-train-test"
+        ],
+        "source_groups_by_class": {
+          "Benign": 5,
+          "Botnet": 2,
+          "Brute Force": 1,
+          "DDoS": 1,
+          "DoS": 1,
+          "Port Scan": 1,
+          "Web Attack": 1
+        }
+      },
+      "test": {
+        "rows": 123018,
+        "source_group_count": 7,
+        "source_groups": [
+          "Bot-IoT/Full5pc",
+          "CSE-CIC-IDS2018/Botnet-Friday-02-03-2018_TrafficForML_CICFlowMeter.parquet",
+          "CSE-CIC-IDS2018/Bruteforce-Wednesday-14-02-2018_TrafficForML_CICFlowMeter.parquet",
+          "CSE-CIC-IDS2018/Infil1-Wednesday-28-02-2018_TrafficForML_CICFlowMeter.parquet",
+          "CSE-CIC-IDS2018/Web2-Friday-23-02-2018_TrafficForML_CICFlowMeter.parquet",
+          "CTU-13/12-NsisAy-20110819.binetflow.parquet",
+          "CTU-13/13-Virut-20110815-3.binetflow.parquet"
+        ],
+        "source_groups_by_class": {
+          "Benign": 7,
+          "Botnet": 3,
+          "Brute Force": 1,
+          "DDoS": 1,
+          "DoS": 1,
+          "Port Scan": 1,
+          "Web Attack": 1
+        }
+      }
+    }
+  },
+  "model": {
+    "estimator": "RandomForestClassifier",
+    "n_estimators": 120,
+    "class_weight": "balanced_subsample",
+    "max_depth": 28,
+    "min_samples_leaf": 2,
+    "random_state": 42,
+    "sklearn_version": "1.9.0",
+    "feature_columns": [
+      "duration",
+      "src_packets",
+      "dst_packets",
+      "src_bytes",
+      "dst_bytes",
+      "total_packets",
+      "total_bytes",
+      "packet_rate",
+      "byte_rate",
+      "src_port",
+      "dst_port",
+      "protocol"
+    ],
+    "hyperparameter_tuning": false
+  },
+  "approved_thresholds": {
+    "attack_recall_min": 0.9,
+    "attack_precision_min": 0.8,
+    "benign_false_alarm_rate_max": 0.005
+  },
+  "results": {
+    "validation": {
+      "per_class": {
+        "Benign": {
+          "precision": 0.5779162415585678,
+          "precision_ci_95": [
+            0.5745390058447326,
+            0.5812862064890416
+          ],
+          "recall": 0.95162,
+          "recall_ci_95": [
+            0.9497042856226438,
+            0.9534663219732334
+          ],
+          "f1": 0.7191155578393738,
+          "support": 50000
+        },
+        "Botnet": {
+          "precision": 0.3104859335038363,
+          "precision_ci_95": [
+            0.29617479617619913,
+            0.3251691028717336
+          ],
+          "recall": 0.11024337086814384,
+          "recall_ci_95": [
+            0.10452901660454944,
+            0.11622956801416909
+          ],
+          "f1": 0.16271277308671758,
+          "support": 11012
+        },
+        "Brute Force": {
+          "precision": 0.0,
+          "precision_ci_95": [
+            0.0,
+            0.0
+          ],
+          "recall": 0.0,
+          "recall_ci_95": [
+            0.0,
+            0.002982975546060944
+          ],
+          "f1": 0.0,
+          "support": 1284
+        },
+        "DDoS": {
+          "precision": 0.1986754966887417,
+          "precision_ci_95": [
+            0.1428606622546239,
+            0.2694419747628184
+          ],
+          "recall": 0.003,
+          "recall_ci_95": [
+            0.002102274095435337,
+            0.0042794343074646045
+          ],
+          "f1": 0.005910747709585263,
+          "support": 10000
+        },
+        "DoS": {
+          "precision": 0.0,
+          "precision_ci_95": [
+            0.0,
+            0.0008276025618797504
+          ],
+          "recall": 0.0,
+          "recall_ci_95": [
+            0.0,
+            0.00038401247776654115
+          ],
+          "f1": 0.0,
+          "support": 10000
+        },
+        "Port Scan": {
+          "precision": 0.0,
+          "precision_ci_95": [
+            0.0,
+            0.0
+          ],
+          "recall": 0.0,
+          "recall_ci_95": [
+            0.0,
+            0.0004574508764251996
+          ],
+          "f1": 0.0,
+          "support": 8394
+        },
+        "Web Attack": {
+          "precision": 0.0,
+          "precision_ci_95": [
+            0.0,
+            0.0
+          ],
+          "recall": 0.0,
+          "recall_ci_95": [
+            0.0,
+            0.011140187262789638
+          ],
+          "f1": 0.0,
+          "support": 341
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "Benign",
+          "Botnet",
+          "Brute Force",
+          "DDoS",
+          "DoS",
+          "Port Scan",
+          "Web Attack"
+        ],
+        "values": [
+          [
+            47581,
+            2146,
+            0,
+            109,
+            164,
+            0,
+            0
+          ],
+          [
+            9798,
+            1214,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1284,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            5525,
+            0,
+            0,
+            30,
+            4445,
+            0,
+            0
+          ],
+          [
+            9490,
+            510,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            8354,
+            40,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            300,
+            0,
+            0,
+            12,
+            29,
+            0,
+            0
+          ]
+        ]
+      },
+      "benign_false_alarm_rate": 0.04838,
+      "benign_false_alarm_rate_ci_95": [
+        0.04653367802676652,
+        0.05029571437735628
+      ]
+    },
+    "test": {
+      "per_class": {
+        "Benign": {
+          "precision": 0.5309226211978904,
+          "precision_ci_95": [
+            0.5279821551135571,
+            0.533860941696277
+          ],
+          "recall": 0.9720720273823106,
+          "recall_ci_95": [
+            0.9707285449006645,
+            0.9733555400668302
+          ],
+          "f1": 0.6867556438188138,
+          "support": 60477
+        },
+        "Botnet": {
+          "precision": 0.908666017526777,
+          "precision_ci_95": [
+            0.9029404364635697,
+            0.9140859813858159
+          ],
+          "recall": 0.42418181818181816,
+          "recall_ci_95": [
+            0.4176648560412869,
+            0.4307252541656509
+          ],
+          "f1": 0.5783700030988533,
+          "support": 22000
+        },
+        "Brute Force": {
+          "precision": 0.0,
+          "precision_ci_95": [
+            0.0,
+            0.0
+          ],
+          "recall": 0.0,
+          "recall_ci_95": [
+            0.0,
+            0.00038401247776654115
+          ],
+          "f1": 0.0,
+          "support": 10000
+        },
+        "DDoS": {
+          "precision": 0.0,
+          "precision_ci_95": [
+            0.0,
+            0.013876527227121935
+          ],
+          "recall": 0.0,
+          "recall_ci_95": [
+            0.0,
+            0.00038401247776654115
+          ],
+          "f1": 0.0,
+          "support": 10000
+        },
+        "DoS": {
+          "precision": 0.22863741339491916,
+          "precision_ci_95": [
+            0.20947261674105405,
+            0.24900331792948271
+          ],
+          "recall": 0.0396,
+          "recall_ci_95": [
+            0.03595110213762231,
+            0.043602496551905116
+          ],
+          "f1": 0.06750767132628707,
+          "support": 10000
+        },
+        "Port Scan": {
+          "precision": 0.3333333333333333,
+          "precision_ci_95": [
+            0.15176100694691236,
+            0.5828687484878701
+          ],
+          "recall": 0.0005,
+          "recall_ci_95": [
+            0.00021358527533545964,
+            0.001170043189953315
+          ],
+          "f1": 0.000998502246630055,
+          "support": 10000
+        },
+        "Web Attack": {
+          "precision": 0.0,
+          "precision_ci_95": [
+            0.0,
+            0.0
+          ],
+          "recall": 0.0,
+          "recall_ci_95": [
+            0.0,
+            0.00705085661594122
+          ],
+          "f1": 0.0,
+          "support": 541
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "Benign",
+          "Botnet",
+          "Brute Force",
+          "DDoS",
+          "DoS",
+          "Port Scan",
+          "Web Attack"
+        ],
+        "values": [
+          [
+            58788,
+            938,
+            0,
+            230,
+            521,
+            0,
+            0
+          ],
+          [
+            12596,
+            9332,
+            0,
+            29,
+            43,
+            0,
+            0
+          ],
+          [
+            9999,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            9774,
+            0,
+            0,
+            0,
+            217,
+            9,
+            0
+          ],
+          [
+            9603,
+            0,
+            0,
+            0,
+            396,
+            1,
+            0
+          ],
+          [
+            9476,
+            0,
+            0,
+            0,
+            519,
+            5,
+            0
+          ],
+          [
+            492,
+            0,
+            0,
+            13,
+            36,
+            0,
+            0
+          ]
+        ]
+      },
+      "benign_false_alarm_rate": 0.02792797261768937,
+      "benign_false_alarm_rate_ci_95": [
+        0.026644459933169714,
+        0.029271455099335392
+      ]
+    },
+    "attack_threshold_status": {
+      "Botnet": "fail",
+      "Brute Force": "fail",
+      "DDoS": "fail",
+      "DoS": "fail",
+      "Port Scan": "fail",
+      "Web Attack": "fail"
+    },
+    "benign_false_alarm_threshold_status": "fail"
+  },
+  "limitations": [
+    "Dataset source-group independence does not establish generalization to a deployment network or site.",
+    "CSE-CIC-IDS2018 captures do not provide source and destination port fields in this flow export; normalized port features are zero.",
+    "The live flow extractor is a limited feature implementation and has not been proven semantically equivalent to every offline dataset feature.",
+    "No hyperparameter tuning, probability calibration, or deployment-network validation was performed."
+  ]
+}

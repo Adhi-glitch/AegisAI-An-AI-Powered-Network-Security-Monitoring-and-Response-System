@@ -19,15 +19,14 @@ log = structlog.get_logger("aegis.http")
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Add security headers to every HTTP response."""
 
-    # Content-Security-Policy: allow CDN for Chart.js (legacy dashboard),
-    # ws/wss for WebSocket, and 'self' for everything else.
+    # Content-Security-Policy: permit local API/WS connections, inline scripts for React, and CDNs
     CSP = (
-        "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline' cdn.jsdelivr.net; "
-        "style-src 'self' 'unsafe-inline'; "
-        "connect-src 'self' ws: wss:; "
-        "img-src 'self' data:; "
-        "font-src 'self';"
+        "default-src 'self' 'unsafe-inline'; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline' fonts.googleapis.com; "
+        "connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* ws: wss:; "
+        "img-src 'self' data: blob:; "
+        "font-src 'self' fonts.gstatic.com data:;"
     )
 
     async def dispatch(self, request: Request, call_next) -> Response:

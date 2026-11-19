@@ -12,6 +12,8 @@ from typing import Any
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
+from backend.auth import get_user_from_token
+
 router = APIRouter(tags=["websocket"])
 
 
@@ -52,6 +54,10 @@ async def websocket_feed(websocket: WebSocket) -> None:
     Clients connect here and receive JSON payloads whenever a new detection is stored.
     A heartbeat ping is sent every 25 seconds to keep the connection alive.
     """
+    user = get_user_from_token(websocket.query_params.get("access_token"))
+    if user is None:
+        await websocket.close(code=4401, reason="Authentication required")
+        return
     await manager.connect(websocket)
     try:
         while True:
