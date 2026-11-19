@@ -14,50 +14,14 @@ Usage:
 """
 import argparse
 from pathlib import Path
+import sys
 import pandas as pd
 
-# Mapping from raw labels to Phase 1 labels
-LABEL_MAPPING = {
-    "BENIGN": "Benign",
-    "Benign": "Benign",
-    "benign": "Benign",
-    
-    # DoS attacks
-    "DoS GoldenEye": "DoS",
-    "DoS Hulk": "DoS",
-    "DoS Slowhttptest": "DoS",
-    "DoS slowloris": "DoS",
-    "Heartbleed": "DoS",
-    
-    # DDoS
-    "DDoS": "DDoS",
-    
-    # Port Scan
-    "PortScan": "Port Scan",
-    "Port Scan": "Port Scan",
-    
-    # Brute Force
-    "FTP-Patator": "Brute Force",
-    "SSH-Patator": "Brute Force",
-    "Brute Force": "Brute Force",
-    
-    # Web Attack
-    "Web Attack ï¿½ Brute Force": "Web Attack",
-    "Web Attack – Brute Force": "Web Attack",
-    "Web Attack ï¿½ Sql Injection": "Web Attack",
-    "Web Attack – SQL Injection": "Web Attack",
-    "Web Attack ï¿½ XSS": "Web Attack",
-    "Web Attack – XSS": "Web Attack",
-    "Web Attack": "Web Attack",
-    
-    # Botnet
-    "Bot": "Botnet",
-    "Botnet": "Botnet",
-    
-    # Infiltration (map to Botnet if not in Phase 1)
-    "Infiltration": "Botnet",
-}
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
+from ml.data.multidataset import canonicalize_label
 
 def normalize_csv(input_path: Path, output_path: Path):
     """
@@ -78,25 +42,26 @@ def normalize_csv(input_path: Path, output_path: Path):
             print(f"  Warning: No 'Label' column in {input_path.name}, skipping")
             return False
         
-        original_labels = df[label_col].unique()
-        
-        # Normalize labels
-        df[label_col] = df[label_col].map(LABEL_MAPPING)
-        
-        # Check for unmapped labels
-        unmapped = df[df[label_col].isna()]
-        if len(unmapped) > 0:
-            print(f"  Warning: Found unmapped labels in {input_path.name}:")
-            print(f"    {unmapped[label_col].unique() if label_col in unmapped.columns else 'N/A'}")
-            # Drop unmapped rows
-            df = df.dropna(subset=[label_col])
-        
+        original_values = df[label_col].copy()
+        normalized_labels = original_values.map(canonicalize_label)
+        if "infilteration" in input_path.name.casefold() or "infiltration" in input_path.name.casefold():
+            normalized_labels = normalized_labels.mask(
+                original_values.astype(str).str.strip().str.casefold().eq("botnet")
+            )
+
+        unmapped = normalized_labels.isna()
+        if unmapped.any():
+            unmapped_counts = original_values[unmapped].value_counts(dropna=False)
+            print(f"  Dropping unsupported labels in {input_path.name}: {unmapped_counts.to_dict()}")
+        df[label_col] = normalized_labels
+        df = df.loc[~unmapped].copy()
+
         # Rename to standard "Label"
         df = df.rename(columns={label_col: "Label"})
-        
+
         df.to_csv(output_path, index=False)
         print(f"  ✓ Normalized {input_path.name} ({len(df)} rows)")
-        print(f"    Labels: {df['Label'].unique().tolist()}")
+        print(f"    Per-class rows: {df['Label'].value_counts().sort_index().to_dict()}")
         return True
         
     except Exception as e:
@@ -109,18 +74,21 @@ def main():
     parser.add_argument(
         "--input-dir",
         type=Path,
-        default=Path("data/phase1/CIC-IDS-2017"),
+        default=None,
         help="Directory with raw CIC-IDS CSVs"
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("ml/data/raw"),
+        default=Path("ml/data/processed/cicids-normalized"),
         help="Directory to write normalized CSVs"
     )
     args = parser.parse_args()
     
-    input_dir = args.input_dir
+    phase1_input = ROOT / "data" / "phase1" / "CIC-IDS-2017"
+    input_dir = args.input_dir or (
+        phase1_input if phase1_input.exists() else ROOT / "ml" / "data" / "raw"
+    )
     output_dir = args.output_dir
     
     if not input_dir.exists():

@@ -1,91 +1,83 @@
 """
-Create stratified sample splits from the full CICIDS train/val/test CSVs.
-
-Default target: ~300k train rows (proportional val/test) for a week-milestone
-baseline that trains in reasonable time on a laptop.
-
-Usage:
-  python scripts/sample_splits.py
-  python scripts/sample_splits.py --train-size 300000 --seed 42
+Create stratified sample splits from the unified CSV.
+Enforces that independent source groups are never split across train/val/test
+to prevent data leakage (using GroupShuffleSplit logic).
 """
 from __future__ import annotations
 
 import argparse
 import json
 from pathlib import Path
-
 import pandas as pd
-from sklearn.model_selection import train_test_split
+import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 SPLITS = ROOT / "ml" / "data" / "splits"
-OUT = SPLITS / "sample"
-
-
-def _sample_frame(df: pd.DataFrame, n: int, seed: int) -> pd.DataFrame:
-    if n >= len(df):
-        return df.reset_index(drop=True)
-    counts = df["label"].value_counts()
-    if counts.min() >= 2 and df["label"].nunique() > 1:
-        try:
-            sampled, _ = train_test_split(
-                df,
-                train_size=n,
-                stratify=df["label"],
-                random_state=seed,
-            )
-            return sampled.reset_index(drop=True)
-        except ValueError:
-            pass
-    return df.sample(n=n, random_state=seed).reset_index(drop=True)
-
+OUT = SPLITS / "trustworthy"
 
 def main():
-    parser = argparse.ArgumentParser(description="Stratified sample of CICIDS splits")
-    parser.add_argument("--train-size", type=int, default=300_000)
+    parser = argparse.ArgumentParser(description="Group-based split of unified CSV")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument(
-        "--val-ratio",
-        type=float,
-        default=None,
-        help="If set, size val as this fraction of train-size (else scale from full split sizes)",
-    )
-    parser.add_argument(
-        "--test-ratio",
-        type=float,
-        default=None,
-        help="If set, size test as this fraction of train-size (else scale from full split sizes)",
-    )
     args = parser.parse_args()
 
-    train_path = SPLITS / "train.csv"
-    val_path = SPLITS / "val.csv"
-    test_path = SPLITS / "test.csv"
-    for p in (train_path, val_path, test_path):
-        if not p.exists():
-            raise FileNotFoundError(f"Missing split: {p}")
+    unified_path = ROOT / "ml" / "data" / "unified_full.csv"
+    if not unified_path.exists():
+        raise FileNotFoundError(f"Missing {unified_path}")
 
-    print("Loading full splits (this can take a minute)...")
-    train = pd.read_csv(train_path)
-    val = pd.read_csv(val_path)
-    test = pd.read_csv(test_path)
-    print(f"  full train={len(train):,} val={len(val):,} test={len(test):,}")
+    print("Loading unified CSV...")
+    df = pd.read_csv(unified_path)
+    
+    if "source_group" not in df.columns:
+        raise ValueError("source_group column missing from unified CSV")
 
-    train_n = min(args.train_size, len(train))
-    if args.val_ratio is not None:
-        val_n = max(1, int(train_n * args.val_ratio))
-    else:
-        val_n = max(1, int(len(val) * (train_n / len(train))))
-    if args.test_ratio is not None:
-        test_n = max(1, int(train_n * args.test_ratio))
-    else:
-        test_n = max(1, int(len(test) * (train_n / len(train))))
-    val_n = min(val_n, len(val))
-    test_n = min(test_n, len(test))
+    # Check that each class has at least 3 source groups
+    group_counts = df.groupby('label')['source_group'].nunique()
+    if (group_counts < 3).any():
+        print(group_counts)
+        raise ValueError("Some classes lack >= 3 distinct source groups. Cannot split safely without leakage.")
 
-    train_s = _sample_frame(train, train_n, args.seed)
-    val_s = _sample_frame(val, val_n, args.seed + 1)
-    test_s = _sample_frame(test, test_n, args.seed + 2)
+    # We will split groups, not rows.
+    # To stratify somewhat, we assign groups to train/val/test.
+    # Since groups might have different label distributions, we just randomly assign groups.
+    # We want roughly 60/20/20.
+    
+    np.random.seed(args.seed)
+    
+    train_groups = []
+    val_groups = []
+    test_groups = []
+
+    for label in df['label'].unique():
+        class_df = df[df['label'] == label]
+        unique_groups = class_df['source_group'].unique()
+        unique_groups = list(unique_groups) # safe for shuffling
+        np.random.shuffle(unique_groups)
+        
+        # assign groups 60/20/20 approximately by items
+        # since we have exactly 3 groups for many classes, let's just put
+        # at least 1 in train, 1 in val, 1 in test if there are exactly 3.
+        if len(unique_groups) >= 3:
+            train_groups.append(unique_groups[0])
+            val_groups.append(unique_groups[1])
+            test_groups.append(unique_groups[2])
+            # any extras go to train
+            train_groups.extend(unique_groups[3:])
+        else:
+            # fallback
+            train_groups.extend(unique_groups)
+
+    # ensure lists are unique
+    train_groups = list(set(train_groups))
+    val_groups = list(set(val_groups))
+    test_groups = list(set(test_groups))
+
+    # Remove overlaps if any (should not happen if groups are unique per class)
+    val_groups = [g for g in val_groups if g not in train_groups]
+    test_groups = [g for g in test_groups if g not in train_groups and g not in val_groups]
+
+    train_s = df[df['source_group'].isin(train_groups)].reset_index(drop=True)
+    val_s = df[df['source_group'].isin(val_groups)].reset_index(drop=True)
+    test_s = df[df['source_group'].isin(test_groups)].reset_index(drop=True)
 
     OUT.mkdir(parents=True, exist_ok=True)
     train_s.to_csv(OUT / "train.csv", index=False)
@@ -97,25 +89,21 @@ def main():
         "train_rows": len(train_s),
         "val_rows": len(val_s),
         "test_rows": len(test_s),
+        "train_groups": len(train_groups),
+        "val_groups": len(val_groups),
+        "test_groups": len(test_groups),
         "train_label_counts": train_s["label"].value_counts().sort_index().to_dict(),
         "val_label_counts": val_s["label"].value_counts().sort_index().to_dict(),
         "test_label_counts": test_s["label"].value_counts().sort_index().to_dict(),
-        "source": {
-            "train": str(train_path),
-            "val": str(val_path),
-            "test": str(test_path),
-        },
     }
-    # JSON keys must be strings
     for key in ("train_label_counts", "val_label_counts", "test_label_counts"):
         meta[key] = {str(k): int(v) for k, v in meta[key].items()}
 
     with open(OUT / "sample_meta.json", "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2)
 
-    print(f"Wrote samples to {OUT}")
+    print(f"Wrote trustworthy splits to {OUT}")
     print(json.dumps(meta, indent=2))
-
 
 if __name__ == "__main__":
     main()

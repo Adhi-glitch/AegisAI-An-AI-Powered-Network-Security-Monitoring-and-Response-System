@@ -21,6 +21,10 @@ This document outlines the next engineering phases to evolve AegisAI from a hard
 │  - Npcap / Scapy asynchronous network interface capture     │
 │  - Stateful TCP/UDP flow aggregator (CICFlowMeter-style)    │
 │  - Real-time rolling feature vectorization                  │
+│  Phase 3: Live Capture Prototype Implemented                │
+│  - Npcap / Scapy capture controls and IPv4 flow aggregation │
+│  - 12-feature active model contract                         │
+│  - Elevated-host live sniff verification remains            │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
@@ -71,6 +75,9 @@ This document outlines the next engineering phases to evolve AegisAI from a hard
      - Compute real-time flow metrics matching CICIDS features (`flow_duration`, `packet_rate`, `byte_rate`, `fwd/bwd packet count`, `inter-arrival times`, `TCP flags`).
   3. **Capture Lifecycle Controls**:
      - REST and WebSocket controls to start, pause, stop, and select network interfaces dynamically from the UI.
+  1. Verify packet capture from an elevated Windows process and on a selected physical interface.
+  2. Expand the current 12-feature prototype only if the model is retrained and evaluated against the expanded schema.
+  3. Add pause/resume controls only if required by the target operator workflow.
 
 ---
 

@@ -1,21 +1,36 @@
 ﻿# Dataset Requirements and Sources
 
 Target classes (Phase 1):
+- Benign
 - DoS
 - DDoS
 - Port Scan
 - Brute Force
 - Web Attack
 - Botnet
-- Benign
+
+## Canonical label mapping
+
+The pipeline uses one ordered label set and numeric IDs: `0 Benign`, `1 Botnet`, `2 Brute Force`, `3 DDoS`, `4 DoS`, `5 Port Scan`, `6 Web Attack`. Unknown or generic binary labels such as `Attack`, `Malicious`, and `1` are dropped rather than guessed.
+
+| Dataset | Original labels mapped to canonical classes | Exclusions and caveats |
+|---------|---------------------------------------------|------------------------|
+| CICIDS2017 | `BENIGN` → Benign; `DoS *` and `Heartbleed` → DoS; `DDoS` → DDoS; `PortScan` → Port Scan; `FTP-Patator` / `SSH-Patator` → Brute Force; `Web Attack *` (Brute Force, SQL Injection, XSS) → Web Attack; explicit `Bot` / `Botnet` → Botnet | `Infiltration` is not Botnet and is dropped. Rows in the checked-in Infiltration-named CSV that were previously rewritten to `Botnet` are excluded too. |
+| CSE-CIC-IDS2018 | `Benign`; `Botnet`; `FTP-BruteForce` / `SSH-Bruteforce` → Brute Force; `DDoS *` → DDoS; `DoS *` → DoS; `PortScan` → Port Scan; `Brute Force -Web`, `Brute Force -XSS`, and `SQL Injection` → Web Attack | Infiltration is excluded. Treat each scenario/date Parquet file as an independent source group. TrafficForML exports lack source/destination port fields, so those normalized features are zero. |
+| UNSW-NB15 | `Normal` → Benign; `DoS` → DoS; `Reconnaissance` → Port Scan | The canonical Port Scan class is a coarse reconnaissance bucket. Other UNSW attack categories are not forced into one of the seven labels. Use `attack_cat`, not the binary `label` column. |
+| CTU-13 | `From-Normal` → Benign; `From-Botnet` / explicit Botnet → Botnet | Requires labeled flow exports under `data/phase1/CTU-13/`. |
+| Bot-IoT | Explicit Benign/Normal → Benign; DoS/DDoS categories → their matching classes; Reconnaissance → Port Scan | The dataset name alone does not make a row Botnet. Requires labeled feature CSVs under `data/phase1/Bot-IoT/`. |
+| NSL-KDD | `normal` → Benign; DoS family names (for example `neptune`, `smurf`) → DoS; `probe`, `ipsweep`, `nmap`, `portsweep` → Port Scan; `guess_passwd` → Brute Force | Remaining U2R/R2L and other attack labels are excluded unless a defensible mapping is added. |
+
+Mapping code is centralized in `ml/data/multidataset.py` and shared by `scripts/normalize_cicids_labels.py`. Source category fields such as UNSW `attack_cat` take priority over generic binary fields.
 
 ## Primary Phase 1 datasets to download
 
 The following datasets are the main sources you should collect for Phase 1. They are chosen for completeness, attack coverage, and common use in IDS research.
 
 1. **CICIDS2017 / CSE-CIC-IDS2018**
-   - Best all-in-one source for Phase 1.
-   - Cover: `Benign`, `DoS`, `DDoS`, `Port Scan`, `Brute Force`, `Web Attack`, `Botnet`.
+   - Covers several Phase 1 classes; actual coverage must be checked after label normalization.
+   - CICIDS2017 has explicitly labeled Bot traffic, but Web Attack coverage depends on the source CSV retaining its original attack labels.
    - Download the raw CSV flow exports and put them under `ml/data/raw/` or a dedicated `data/phase1/CICIDS2017/` folder.
    - Link: https://www.unb.ca/cic/datasets/ids-2017.html
 
@@ -123,7 +138,7 @@ For each dataset you add, verify:
 
 ## Quick mapping: dataset → attack coverage
 
-- CICIDS2017 / CSE-CIC-IDS2018: all Phase 1 attacks
+- CICIDS2017 / CSE-CIC-IDS2018: Benign, DoS, DDoS, Port Scan, Brute Force, and explicit Bot labels; Web Attack only when the source subtypes are retained
 - UNSW-NB15: DoS, DDoS, reconnaissance, normal, plus other attack classes
 - CTU-13: botnet
 - CICDDoS2019: DDoS / DoS
@@ -131,23 +146,33 @@ For each dataset you add, verify:
 - TON_IoT / Bot-IoT: IoT DoS/DDoS/reconnaissance
 - CAIDA / MAWI: port scan / DDoS research
 
-## Current data/phase1 status
+## Verified Workspace Coverage
 
-The project currently contains the following confirmed raw dataset folders under `data/phase1/`:
+The workspace now contains CIC-IDS-2017, CSE-CIC-IDS2018, UNSW-NB15, Bot-IoT, CTU-13, and NSL-KDD under `data/phase1/`. The streaming audit is reproducible with `python scripts/audit_phase1_coverage.py`. Counts below use the shared canonical mapper, exclude unsupported Infiltration labels, and omit overlapping NSL-KDD `KDDTest-21` and `KDDTrain+_20Percent` subsets.
 
-- `data/phase1/CIC-IDS-2017/`
-- `data/phase1/UNSW-NB15/`
-- `data/phase1/CTU-13/`
-- `data/phase1/NSL-KDD/`
-- `data/phase1/Bot-IoT/`
+| Canonical class | Retained rows | Conservative source groups |
+|-----------------|--------------:|---------------------------:|
+| Benign | 18,108,834 | 34 |
+| Botnet | 409,074 | 15 |
+| Brute Force | 109,220 | 3 |
+| DDoS | 2,830,606 | 4 |
+| DoS | 2,167,923 | 6 |
+| Port Scan | 272,393 | 4 |
+| Web Attack | 3,062 | 3 |
 
-Notes:
+Group policy: CICIDS2017 day files, CSE-CIC-IDS2018 scenario/date Parquet files, and CTU-13 scenario Parquet files are separate capture groups. UNSW-NB15 official training/testing partitions, Bot-IoT `Full5pc` shards, and NSL-KDD official partitions each count as one source group unless capture provenance demonstrates otherwise. The Infiltration-named CICIDS file contributes its 288,566 Benign rows; Infiltration is not Botnet.
 
-- `NSL-KDD` currently includes a duplicate nested copy under `data/phase1/NSL-KDD/nsl-kdd/`; keep one clean copy and remove duplicates after confirming the needed files.
-- `UNSW-NB15` contains training/testing CSVs plus feature and label CSV exports.
-- No `_Error.txt` placeholder files were found in the current `data/phase1/` dataset folders.
-- `CICDDoS2019` and `TON_IoT` are not currently present, so add them if you need extra DDoS or IoT coverage.
+**Coverage verdict:** all seven labels have at least three conservative source groups, so the data now meets the minimum coverage prerequisite for a group-disjoint train/validation/test evaluation. This does not imply that model metrics pass the approved release thresholds or establish generalization to a deployment network.
 
-Recommendation:
-
-Keep raw dataset sources separate in `data/phase1/<dataset-name>/` until preprocessing, then move cleaned CSV/ARFF files into `ml/data/raw/` for feature extraction and model training.
+The CSE-integrated strict group evaluation is recorded in
+[`artifacts/strict_group_evaluation.json`](../artifacts/strict_group_evaluation.json).
+Reproduce the deterministic 10,000-row-per-source-group/class evaluation with
+`.\.venv\Scripts\python.exe scripts\evaluate_grouped_model.py`.
+It used 573,986 bounded samples and held out 123,018 test rows with zero
+source-group overlap. The model did not meet any approved attack-class
+precision/recall gate, and benign false-alarm rate was 2.7928% versus the 0.5%
+maximum. The test split has one source group for Brute Force, DDoS, DoS, Port
+Scan, and Web Attack; these results do not qualify the active production bundle.
+Its row-level Wilson intervals do not account for within-capture dependence.
+The earlier six-class best-effort report is retained as historical evidence only:
+[`artifacts/best_effort_group_evaluation.json`](../artifacts/best_effort_group_evaluation.json).

@@ -22,17 +22,10 @@ from typing import Dict
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
+from ml.data.multidataset import CANONICAL_LABELS
 
 
-EXPECTED_LABELS = [
-    "Benign",
-    "DoS",
-    "DDoS",
-    "Port Scan",
-    "Brute Force",
-    "Web Attack",
-    "Botnet",
-]
+EXPECTED_LABELS = CANONICAL_LABELS
 
 
 def load_dataset(path: str, label_column: str = "Label", test_size=0.2, val_size=0.1, random_state=42) -> Dict[str, pd.DataFrame]:
@@ -59,11 +52,6 @@ def load_dataset(path: str, label_column: str = "Label", test_size=0.2, val_size
     labels = df[label_column].astype(str)
     features = df.drop(columns=[label_column])
 
-    # Encode labels
-    le = LabelEncoder()
-    y = le.fit_transform(labels)
-    print(f"  Label distribution: {dict(zip(le.classes_, [(y == i).sum() for i in range(len(le.classes_))]))}")
-
     # Handle numeric features: replace inf with NaN, then fill with median
     numeric_cols = features.select_dtypes(include=["number"]).columns.tolist()
     print(f"  Found {len(numeric_cols)} numeric columns")
@@ -80,7 +68,12 @@ def load_dataset(path: str, label_column: str = "Label", test_size=0.2, val_size
     
     # Remove rows with any remaining NaN
     X = X.dropna()
-    y = y[:len(X)]  # Align y with X
+    labels = labels.loc[X.index]
+
+    # Encode labels after feature cleanup to preserve row alignment.
+    le = LabelEncoder()
+    y = le.fit_transform(labels)
+    print(f"  Label distribution: {dict(zip(le.classes_, [(y == i).sum() for i in range(len(le.classes_))]))}")
     
     print(f"  After cleaning NaN/inf: {len(X)} rows")
     
