@@ -1,0 +1,20 @@
+{
+  "train_csv": "ml\\data\\splits\\sample\\train.csv",
+  "val_csv": "ml\\data\\splits\\sample\\val.csv",
+  "test_csv": "ml\\data\\splits\\sample\\test.csv",
+  "n_train": 300000,
+  "n_val": 42857,
+  "n_features": 78,
+  "n_estimators": 120,
+  "val_accuracy": 0.9990899969666566,
+  "classes": [
+    "Benign",
+    "Botnet",
+    "Brute Force",
+    "DDoS",
+    "DoS",
+    "Port Scan"
+  ],
+  "engine": "xgboost",
+  "gpu_enabled": true
+}

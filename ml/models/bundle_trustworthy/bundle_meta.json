@@ -1,0 +1,24 @@
+{
+  "train_csv": "ml\\data\\splits\\trustworthy\\train.csv",
+  "val_csv": "ml\\data\\splits\\trustworthy\\val.csv",
+  "test_csv": "ml\\data\\splits\\trustworthy\\test.csv",
+  "n_train": 147765,
+  "n_val": 148101,
+  "n_features": 78,
+  "n_estimators": 120,
+  "val_accuracy": 0.999088459902364,
+  "classes": [
+    "Benign",
+    "Botnet",
+    "Brute Force",
+    "DDoS",
+    "DoS",
+    "Port Scan",
+    "Web Attack"
+  ],
+  "engine": "xgboost",
+  "gpu_enabled": true,
+  "split_strategy": "unspecified",
+  "capture_overlap_warning": false,
+  "source_groups_by_class": {}
+}

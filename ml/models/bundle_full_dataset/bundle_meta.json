@@ -1,0 +1,24 @@
+{
+  "train_csv": "C:\\Users\\vadit\\Desktop\\AegisAI\\ml\\data\\splits\\full\\train.csv",
+  "val_csv": "C:\\Users\\vadit\\Desktop\\AegisAI\\ml\\data\\splits\\full\\val.csv",
+  "test_csv": "C:\\Users\\vadit\\Desktop\\AegisAI\\ml\\data\\splits\\full\\test.csv",
+  "n_train": 957374,
+  "n_val": 957882,
+  "n_features": 78,
+  "n_estimators": 120,
+  "val_accuracy": 0.9991669119995991,
+  "classes": [
+    "Benign",
+    "Botnet",
+    "Brute Force",
+    "DDoS",
+    "DoS",
+    "Port Scan",
+    "Web Attack"
+  ],
+  "engine": "xgboost",
+  "gpu_enabled": true,
+  "split_strategy": "unspecified",
+  "capture_overlap_warning": false,
+  "source_groups_by_class": {}
+}
