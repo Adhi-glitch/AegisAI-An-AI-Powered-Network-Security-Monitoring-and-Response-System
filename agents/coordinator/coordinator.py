@@ -4,35 +4,63 @@ Coordinator orchestrates:
 """
 from __future__ import annotations
 
+from threading import RLock
 from typing import Any, Dict, Optional
 
 from agents.anomaly.isolation import AnomalyDetector
 from agents.detection import inference
+from agents.detection.threat_policy import threat_severity
 from agents.explainability.explain import explain_detection
 from agents.reporting import generate_report
 from agents.response.response_engine import engine as response_engine
 from ml.models.bundle import (
     load_anomaly,
+    load_bundle,
     load_feature_columns,
-    load_rf,
     vectorize_features,
 )
 
 _cached = {
     "model": None,
     "columns": None,
+    "label_classes": None,
+    "bundle_dir": None,
     "anomaly": None,
+    "metadata": None,
 }
+_runtime_lock = RLock()
+
+
+class ModelUnavailableError(RuntimeError):
+    """Raised when a prediction cannot be made with the active model bundle."""
+
+
+def get_recorded_action(result: Dict[str, Any]) -> str:
+    """Return the applied response status, preserving dry-run semantics."""
+    response = result.get("response")
+    if isinstance(response, dict) and response.get("status"):
+        return str(response["status"])
+    return str(result.get("action") or "log")
 
 
 def load_runtime(force: bool = False):
     """Load model bundle into process cache."""
-    if force or _cached["model"] is None:
-        _cached["model"] = load_rf()
-        _cached["columns"] = load_feature_columns()
-        raw = load_anomaly()
-        _cached["anomaly"] = AnomalyDetector.from_sklearn(raw) if raw is not None else None
-    return _cached
+    with _runtime_lock:
+        if force or _cached["model"] is None:
+            bundle = load_bundle()
+            raw = load_anomaly(bundle.directory / "anomaly_iforest.pkl")
+            anomaly = AnomalyDetector.from_sklearn(raw) if raw is not None else None
+            _cached.update(
+                {
+                    "model": bundle.model,
+                    "columns": bundle.feature_columns,
+                    "label_classes": bundle.label_classes,
+                    "bundle_dir": bundle.directory,
+                    "metadata": bundle.metadata,
+                    "anomaly": anomaly,
+                }
+            )
+        return dict(_cached)
 
 
 def process_features(
@@ -50,8 +78,15 @@ def process_features(
             columns = runtime["columns"]
             if anomaly_detector is None:
                 anomaly_detector = runtime["anomaly"]
-        except FileNotFoundError:
-            model = None
+        except Exception as exc:
+            raise ModelUnavailableError(
+                "The active model bundle could not be loaded; inference was not run."
+            ) from exc
+
+    if model is None:
+        raise ModelUnavailableError(
+            "The active model is unavailable; inference was not run."
+        )
 
     if columns is None:
         try:
@@ -62,10 +97,16 @@ def process_features(
     ordered = vectorize_features(feature_vector, columns) if columns else list(feature_vector.values())
 
     # 1) detection
-    if model is None:
-        predicted, confidence = ("Benign", 0.0)
-    else:
-        predicted, confidence = inference.infer(model, ordered)
+    try:
+        predicted, confidence = inference.infer(
+            model,
+            ordered,
+            bundle_dir=runtime["bundle_dir"] if runtime is not None else None,
+        )
+    except Exception as exc:
+        raise ModelUnavailableError(
+            "The active model failed during inference; no classification was produced."
+        ) from exc
 
     # 2) anomaly scoring
     anomaly_score = 0.0
@@ -78,10 +119,19 @@ def process_features(
     # 3) explanation
     explanation = explain_detection(predicted, feature_vector, model=model, feature_names=columns)
 
-    # 4) response decision
-    action = response_engine.decide_action(confidence)
-    src_ip = str(feature_vector.get("source_ip", "unknown"))
-    response_result = response_engine.apply_action(src_ip, action)
+    # 4) only threat classifications can trigger response decisions
+    severity = threat_severity(predicted, confidence)
+    if severity is None:
+        action = "ignore"
+        response_result = {"status": "not_actionable"}
+    else:
+        action = response_engine.decide_action(
+            confidence,
+            attack_type=predicted,
+            severity=severity,
+        )
+        src_ip = str(feature_vector.get("source_ip", "unknown"))
+        response_result = response_engine.apply_action(src_ip, action)
 
     # 5) reporting
     report = generate_report(None, None, [predicted])
@@ -89,6 +139,7 @@ def process_features(
     return {
         "predicted": predicted,
         "confidence": confidence,
+        "severity": severity,
         "anomaly_score": anomaly_score,
         "explanation": explanation,
         "action": action,

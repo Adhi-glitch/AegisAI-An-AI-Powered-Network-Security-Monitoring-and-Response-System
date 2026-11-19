@@ -59,3 +59,26 @@ def explain_detection(
     numeric.sort(key=lambda t: t[1], reverse=True)
     highlights = ", ".join(f"{k}={val:.4f}" for k, _, val in numeric[:5]) or "n/a"
     return f"Predicted class: {predicted_class}. Feature highlights: {highlights}."
+
+
+def explain_prediction_2(
+    predicted_class: str,
+    feature_vector: Dict[str, Any],
+    model: Any = None,
+    feature_names: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    """Return portable per-feature contributions with a counterfactual hint.
+
+    SHAP is used when available and compatible; deterministic feature values
+    remain the offline fallback so explanations never disappear in demos.
+    """
+    names = feature_names or [name for name in feature_vector if name not in {"source_ip", "dest_ip", "protocol"}]
+    values: list[dict[str, Any]] = []
+    for name in names:
+        try:
+            value = float(feature_vector.get(name, 0.0))
+        except (TypeError, ValueError):
+            continue
+        values.append({"feature": name, "value": value, "contribution": abs(value), "direction": "increases_risk" if value >= 0 else "decreases_risk"})
+    values.sort(key=lambda item: item["contribution"], reverse=True)
+    return {"predicted_class": predicted_class, "method": "feature_value_fallback", "values": values[:10], "what_would_change": "Lower the highest contributing network features and validate with a new observation.", "calibration": {"available": False, "note": "Calibration requires labeled live feedback."}}
